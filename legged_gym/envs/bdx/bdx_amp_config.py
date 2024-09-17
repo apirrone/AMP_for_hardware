@@ -34,9 +34,10 @@ from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobot
 
 # MOTION_FILES = glob.glob("datasets/bdx/new_placo_moves/*")
 MOTION_FILES = [
-    "datasets/bdx/new_placo_moves/bdx_walk_forward.txt",
-    # "datasets/bdx/placo_moves/bdx_turn_left.txt",
-    # "datasets/bdx/placo_moves/bdx_turn_right.txt",
+    "datasets/bdx/new_new_placo_moves/bdx_walk_forward.txt",
+    "datasets/bdx/new_new_placo_moves/bdx_turn_left.txt",
+    "datasets/bdx/new_new_placo_moves/bdx_turn_right.txt",
+    # "datasets/bdx/new_placo_moves/bdx_walk_forward.txt", # OK
 ]
 
 NO_FEET = False  # Do not use feet in the amp observations and data
@@ -200,23 +201,23 @@ class BDXAMPCfg(LeggedRobotCfg):
         substeps = 1
 
     class domain_rand:
-        randomize_friction = False
-        friction_range = [0.8, 1.2]
-        randomize_base_mass = False
-        added_mass_range = [-0.2, 0.2]
+        randomize_friction = True
+        friction_range = [0.9, 1.1]
+        randomize_base_mass = True
+        added_mass_range = [-0.1, 0.1]
         push_robots = False
         push_interval_s = 15
         max_push_vel_xy = 0.5  # 0.3
         randomize_gains = False
         stiffness_multiplier_range = [0.95, 1.05]
         damping_multiplier_range = [0.95, 1.05]
-        randomize_torques = False
-        torque_multiplier_range = [0.8, 1.2]
-        randomize_com = False
-        com_range = [-0.04, 0.04]
+        randomize_torques = True
+        torque_multiplier_range = [0.9, 1.1]
+        randomize_com = True
+        com_range = [-0.02, 0.02]
 
     class noise:
-        add_noise = False
+        add_noise = True
         noise_level = 1.0  # scales other values
 
         class noise_scales:
@@ -261,9 +262,9 @@ class BDXAMPCfg(LeggedRobotCfg):
         heading_command = False  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [0.1, 0.1]  # min max [m/s]
+            lin_vel_x = [0.0, 0.12]  # min max [m/s]
             lin_vel_y = [0.0, 0.0]  # min max [m/s]
-            ang_vel_yaw = [0.0, 0.0]  # min max [rad/s]
+            ang_vel_yaw = [-0.7, 0.7]  # min max [rad/s]
             heading = [0, 0]
             # lin_vel_x = [0.1, 0.2]  # min max [m/s]
             # lin_vel_y = [0.0, 0.0]  # min max [m/s]
@@ -307,7 +308,7 @@ class BDXAMPCfgPPO(LeggedRobotCfgPPO):
         amp_task_reward_lerp = 0.2  # 0.3
         amp_discr_hidden_dims = [1024, 512]
 
-        disc_grad_penalty = 0.01  # original 10 # TUNE ?
+        disc_grad_penalty = 5  # original 10 # TUNE ?
 
         # min_normalized_std = [0.05, 0.02, 0.05] * 4
 
