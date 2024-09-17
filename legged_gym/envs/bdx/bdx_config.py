@@ -51,6 +51,8 @@ class BDXRoughCfg(LeggedRobotCfg):
         no_feet = NO_FEET
         debug_save_obs = False
 
+        num_rma_obs=0
+
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, 0.16]  # x,y,z [m]
         default_joint_angles = {

@@ -63,6 +63,7 @@ class BaseTask():
         self.num_envs = cfg.env.num_envs
         self.num_obs = cfg.env.num_observations
         self.num_privileged_obs = cfg.env.num_privileged_obs
+        self.num_privileged_obs = cfg.env.num_rma_obs
         self.num_actions = cfg.env.num_actions
         self.include_history_steps = cfg.env.include_history_steps
 

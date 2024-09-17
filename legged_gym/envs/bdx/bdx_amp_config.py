@@ -60,6 +60,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         debug_save_obs = False
         no_feet = NO_FEET
 
+        num_rma_obs = 20
+
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, 0.16]  # x,y,z [m]
         # pos = [0.0, 0.0, 0.3]  # x,y,z [m]

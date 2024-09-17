@@ -64,6 +64,7 @@ class AMPPPO:
         disc_grad_penalty=10.0,
         disc_coef=5,
         bounds_loss_coef=None,
+        num_rma_obs=0
     ):
         self.device = device
 
@@ -118,6 +119,9 @@ class AMPPPO:
         self.disc_coef = disc_coef
         self.bounds_loss_coef = bounds_loss_coef
 
+        # RMA if num rma obs is zero -> disabled
+        self.num_rma_obs = num_rma_obs
+
     def init_storage(
         self,
         num_envs,
@@ -133,6 +137,7 @@ class AMPPPO:
             critic_obs_shape,
             action_shape,
             self.device,
+            num_rma_obs=self.num_rma_obs
         )
 
     def test_mode(self):
@@ -141,13 +146,14 @@ class AMPPPO:
     def train_mode(self):
         self.actor_critic.train()
 
-    def act(self, obs, critic_obs, amp_obs):
+    def act(self, obs, critic_obs, amp_obs, rma_obs=None):
         if self.actor_critic.is_recurrent:
             self.transition.hidden_states = self.actor_critic.get_hidden_states()
         # Compute the actions and values
         aug_obs, aug_critic_obs = obs.detach(), critic_obs.detach()
-        self.transition.actions = self.actor_critic.act(aug_obs).detach()
-        self.transition.values = self.actor_critic.evaluate(aug_critic_obs).detach()
+        if rma_obs is not None: aug_rma_obs = rma_obs.detach()
+        self.transition.actions = self.actor_critic.act(aug_obs, aug_rma_obs).detach()
+        self.transition.values = self.actor_critic.evaluate(aug_critic_obs, aug_rma_obs).detach()
         self.transition.actions_log_prob = self.actor_critic.get_actions_log_prob(
             self.transition.actions
         ).detach()
@@ -157,6 +163,7 @@ class AMPPPO:
         self.transition.observations = obs
         self.transition.critic_observations = critic_obs
         self.amp_transition.observations = amp_obs
+        self.transition.rma_observations = rma_obs
         return self.transition.actions
 
     def process_env_step(self, rewards, dones, infos, amp_obs):
@@ -179,9 +186,10 @@ class AMPPPO:
         self.amp_transition.clear()
         self.actor_critic.reset(dones)
 
-    def compute_returns(self, last_critic_obs):
+    def compute_returns(self, last_critic_obs, last_rma_obs):
         aug_last_critic_obs = last_critic_obs.detach()
-        last_values = self.actor_critic.evaluate(aug_last_critic_obs).detach()
+        aug_last_rma_obs = last_rma_obs.detach()
+        last_values = self.actor_critic.evaluate(aug_last_critic_obs, aug_last_rma_obs).detach()
         self.storage.compute_returns(last_values, self.gamma, self.lam)
 
     def bound_loss(self, mu):
@@ -239,12 +247,13 @@ class AMPPPO:
                 old_actions_log_prob_batch,
                 old_mu_batch,
                 old_sigma_batch,
+                rma_obs_batch,
                 hid_states_batch,
                 masks_batch,
             ) = sample
             aug_obs_batch = obs_batch.detach()
             self.actor_critic.act(
-                aug_obs_batch, masks=masks_batch, hidden_states=hid_states_batch[0]
+                aug_obs_batch, rma_obs_batch, masks=masks_batch, hidden_states=hid_states_batch[0]
             )
             actions_log_prob_batch = self.actor_critic.get_actions_log_prob(
                 actions_batch
@@ -252,6 +261,7 @@ class AMPPPO:
             aug_critic_obs_batch = critic_obs_batch.detach()
             value_batch = self.actor_critic.evaluate(
                 aug_critic_obs_batch,
+                rma_obs_batch,
                 masks=masks_batch,
                 hidden_states=hid_states_batch[1],
             )

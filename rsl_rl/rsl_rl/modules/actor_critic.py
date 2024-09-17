@@ -34,7 +34,7 @@ import torch.nn as nn
 from torch.distributions import Normal
 from torch.nn.modules import rnn
 
-
+RMA_ENC_LAYERS = [256, 128, 4]
 class ActorCritic(nn.Module):
     is_recurrent = False
 
@@ -44,10 +44,11 @@ class ActorCritic(nn.Module):
         num_critic_obs,
         num_actions,
         actor_hidden_dims=[256, 256, 256],
-        critic_hidden_dims=[256, 256, 256],
+        critic_hidden_dims=[256, 256, 256], 
         activation="elu",
         init_noise_std=1.0,
         fixed_std=False,
+        num_rma_obs=0,
         **kwargs,
     ):
         if kwargs:
@@ -61,10 +62,14 @@ class ActorCritic(nn.Module):
 
         mlp_input_dim_a = num_actor_obs
         mlp_input_dim_c = num_critic_obs
+        latent_dim = 0
+        if num_rma_obs != 0:
+            latent_dim = RMA_ENC_LAYERS[-1]
+            rma_enc_dims = RMA_ENC_LAYERS[:-1]
 
         # Policy
         actor_layers = []
-        actor_layers.append(nn.Linear(mlp_input_dim_a, actor_hidden_dims[0]))
+        actor_layers.append(nn.Linear(mlp_input_dim_a + latent_dim, actor_hidden_dims[0]))
         actor_layers.append(activation)
         for l in range(len(actor_hidden_dims)):
             if l == len(actor_hidden_dims) - 1:
@@ -78,7 +83,7 @@ class ActorCritic(nn.Module):
 
         # Value function
         critic_layers = []
-        critic_layers.append(nn.Linear(mlp_input_dim_c, critic_hidden_dims[0]))
+        critic_layers.append(nn.Linear(mlp_input_dim_c + latent_dim, critic_hidden_dims[0]))
         critic_layers.append(activation)
         for l in range(len(critic_hidden_dims)):
             if l == len(critic_hidden_dims) - 1:
@@ -92,6 +97,30 @@ class ActorCritic(nn.Module):
 
         print(f"Actor MLP: {self.actor}")
         print(f"Critic MLP: {self.critic}")
+
+        # RMA encoder
+        self.rma_encoder = None
+        if latent_dim > 0:
+            rma_enc_layers = []
+            rma_enc_layers.append(
+                nn.Linear(num_rma_obs, rma_enc_dims[0])
+            )
+            rma_enc_layers.append(activation)
+            for l in range(len(rma_enc_dims)):
+                if l == len(rma_enc_dims) - 1:
+                    rma_enc_layers.append(
+                        nn.Linear(rma_enc_dims[l], latent_dim)
+                    )
+                else:
+                    rma_enc_layers.append(
+                        nn.Linear(
+                            rma_enc_dims[l], rma_enc_dims[l + 1]
+                        )
+                    )
+                    rma_enc_layers.append(activation)
+            self.rma_encoder = nn.Sequential(*rma_enc_layers)
+
+        print(f"Priv RMA MLP: {self.rma_encoder}")
 
         # Action noise
         self.fixed_std = fixed_std
@@ -133,24 +162,36 @@ class ActorCritic(nn.Module):
     def entropy(self):
         return self.distribution.entropy().sum(dim=-1)
 
-    def update_distribution(self, observations):
-        mean = self.actor(observations)
+    def update_distribution(self, observations, rma_obs=None):
+        if rma_obs is not None:
+            latent = self.rma_encoder(rma_obs)
+            mean = self.actor(torch.cat((observations, latent), dim=1))
+        else:
+            mean = self.actor(observations)
         std = self.std.to(mean.device)
         self.distribution = Normal(mean, mean * 0.0 + std)
 
-    def act(self, observations, **kwargs):
-        self.update_distribution(observations)
+    def act(self, observations, rma_obs=None, **kwargs):
+        self.update_distribution(observations, rma_obs)
         return self.distribution.sample()
 
     def get_actions_log_prob(self, actions):
         return self.distribution.log_prob(actions).sum(dim=-1)
 
-    def act_inference(self, observations):
-        actions_mean = self.actor(observations)
+    def act_inference(self, observations, rma_obs=None):
+        if rma_obs is not None:
+            latent = self.rma_encoder(rma_obs)
+            actions_mean = self.actor(torch.cat((observations, latent), dim=1))
+        else:
+            actions_mean = self.actor(observations)
         return actions_mean
 
-    def evaluate(self, critic_observations, **kwargs):
-        value = self.critic(critic_observations)
+    def evaluate(self, critic_observations, rma_obs=None, **kwargs):
+        if rma_obs is not None:
+            latent = self.rma_encoder(rma_obs)
+            value = self.critic(torch.cat((critic_observations, latent), dim=1))
+        else:
+            value = self.critic(critic_observations)
         return value
 
 

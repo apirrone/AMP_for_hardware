@@ -219,6 +219,8 @@ class LeggedRobot(BaseTask):
 
         self.envs_times[:] += self.dt * (self.envs_cooldowns > 0.5)
 
+        self.extras['dynamics_states'] = self._get_privileged_dynamics_state()
+
         return (
             policy_obs,
             self.privileged_obs_buf,
@@ -656,7 +658,8 @@ class LeggedRobot(BaseTask):
     def _process_rigid_body_props(self, props, env_id):
         if self.cfg.domain_rand.randomize_base_mass:
             rng = self.cfg.domain_rand.added_mass_range
-            props[0].mass += np.random.uniform(rng[0], rng[1])
+            self.randomized_mass = np.random.uniform(rng[0], rng[1])
+            props[0].mass += self.randomized_mass
 
         if self.cfg.domain_rand.randomize_com:
             props[0].com += gymapi.Vec3(
@@ -1291,6 +1294,10 @@ class LeggedRobot(BaseTask):
                 self.num_envs, 3, device=self.device
             )
 
+            self.randomize_mass = torch.zeros(
+                self.num_envs, device=self.device
+            )
+            
             rigid_shape_props = self._process_rigid_shape_props(
                 rigid_shape_props_asset, i
             )
@@ -1524,6 +1531,66 @@ class LeggedRobot(BaseTask):
 
         return heights.view(self.num_envs, -1) * self.terrain.cfg.vertical_scale
 
+
+    def _get_privileged_dynamics_state(self):
+        ## Collect a privileged obs buffer of dynamics parameters
+        if self.cfg.env.num_rma_obs == 0:
+            return None
+        
+        priv_dynamics_obs = torch.empty(self.num_envs, 0).to(self.device)
+        if self.cfg.domain_rand.randomize_friction:
+            friction_coeffs_scale, friction_coeffs_shift = get_scale_shift(
+                self.cfg.domain_rand.friction_range
+            )
+            priv_dynamics_obs = torch.cat(
+                (
+                    priv_dynamics_obs,
+                    (self.friction_coeffs[:, 0] - friction_coeffs_shift)
+                    * friction_coeffs_scale,
+                ),
+                dim=1,
+            )
+        
+        if self.cfg.domain_rand.randomize_base_mass:
+            mass_scale, mass_shift = get_scale_shift(
+                self.cfg.domain_rand.added_mass_range
+            )
+            priv_dynamics_obs = torch.cat(
+                (
+                    priv_dynamics_obs,
+                    (self.randomize_mass.unsqueeze(1) - mass_shift) * mass_scale,
+                ),
+                dim=1,
+            )
+        
+        if self.cfg.domain_rand.randomize_com:
+            com_scale, com_shift = get_scale_shift(self.cfg.domain_rand.com_range)
+            priv_dynamics_obs = torch.cat(
+                (
+                    priv_dynamics_obs,
+                    (self.randomize_com_values - com_shift) * com_scale,
+                ),
+                dim=1,
+            )
+        
+        if self.cfg.domain_rand.randomize_torques:
+            torque_factor_scale, torque_factor_shift = get_scale_shift(
+                self.cfg.domain_rand.torque_multiplier_range
+            )
+            priv_dynamics_obs = torch.cat(
+                (
+                    priv_dynamics_obs,
+                    (self.randomize_torques_factors - torque_factor_shift)
+                    * torque_factor_scale,
+                ),
+                dim=1,
+            )
+
+        if priv_dynamics_obs.shape[-1] == 0:
+            return None
+        
+        return priv_dynamics_obs
+    
     # ------------ reward functions----------------
     def _reward_lin_vel_z(self):
         # Penalize z axis base linear velocity

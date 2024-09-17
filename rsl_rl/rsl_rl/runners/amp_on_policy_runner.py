@@ -66,6 +66,7 @@ class AMPOnPolicyRunner:
             num_actor_obs=num_actor_obs,
             num_critic_obs=num_critic_obs,
             num_actions=self.env.num_actions,
+            num_rma_obs=self.env.num_rma_obs,
             **self.policy_cfg,
         ).to(self.device)
 
@@ -104,6 +105,7 @@ class AMPOnPolicyRunner:
             device=self.device,
             min_std=min_std,
             disc_grad_penalty=train_cfg["runner"]["disc_grad_penalty"],
+            num_rma_obs=self.env.num_rma_obs,
             **self.alg_cfg,
         )
         self.num_steps_per_env = self.cfg["num_steps_per_env"]
@@ -138,12 +140,14 @@ class AMPOnPolicyRunner:
         obs = self.env.get_observations()
         privileged_obs = self.env.get_privileged_observations()
         amp_obs = self.env.get_amp_observations()
+        rma_obs = self.env._get_privileged_dynamics_state()
         critic_obs = privileged_obs if privileged_obs is not None else obs
         obs, critic_obs, amp_obs = (
             obs.to(self.device),
             critic_obs.to(self.device),
             amp_obs.to(self.device),
         )
+        if rma_obs is not None: rma_obs.to(self.device)
         self.alg.actor_critic.train()  # switch to train mode (for dropout for example)
         self.alg.discriminator.train()
 
@@ -163,7 +167,7 @@ class AMPOnPolicyRunner:
             # Rollout
             with torch.inference_mode():
                 for i in range(self.num_steps_per_env):
-                    actions = self.alg.act(obs, critic_obs, amp_obs)
+                    actions = self.alg.act(obs, critic_obs, amp_obs, rma_obs)
                     (
                         obs,
                         privileged_obs,
@@ -183,6 +187,8 @@ class AMPOnPolicyRunner:
                         rewards.to(self.device),
                         dones.to(self.device),
                     )
+                    if infos['dynamics_states'] is not None: 
+                        rma_obs = infos['dynamics_states'].to(self.device)
 
                     # Account for terminal states.
                     next_amp_obs_with_term = torch.clone(next_amp_obs)
@@ -220,7 +226,7 @@ class AMPOnPolicyRunner:
 
                 # Learning step
                 start = stop
-                self.alg.compute_returns(critic_obs)
+                self.alg.compute_returns(critic_obs, rma_obs)
 
             (
                 mean_value_loss,
