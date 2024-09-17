@@ -35,8 +35,8 @@ from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobot
 # MOTION_FILES = glob.glob("datasets/bdx/new_placo_moves/*")
 MOTION_FILES = [
     "datasets/bdx/placo_moves_lower_freq/bdx_walk_forward.txt",
-    "datasets/bdx/placo_moves_lower_freq/bdx_turn_left.txt",
-    "datasets/bdx/placo_moves_lower_freq/bdx_turn_right.txt",
+    # "datasets/bdx/placo_moves_lower_freq/bdx_turn_left.txt",
+    # "datasets/bdx/placo_moves_lower_freq/bdx_turn_right.txt",
     # "datasets/bdx/new_new_placo_moves/bdx_walk_forward.txt",  # OK
     # "datasets/bdx/new_new_placo_moves/bdx_turn_left.txt",
     # "datasets/bdx/new_new_placo_moves/bdx_turn_right.txt",
@@ -204,9 +204,9 @@ class BDXAMPCfg(LeggedRobotCfg):
         substeps = 1
 
     class domain_rand:
-        randomize_friction = False
+        randomize_friction = True
         friction_range = [0.8, 1.2]
-        randomize_base_mass = False
+        randomize_base_mass = True
         added_mass_range = [-0.15, 0.15]
         push_robots = False
         push_interval_s = 15
@@ -214,13 +214,13 @@ class BDXAMPCfg(LeggedRobotCfg):
         randomize_gains = False
         stiffness_multiplier_range = [0.95, 1.05]
         damping_multiplier_range = [0.95, 1.05]
-        randomize_torques = False
+        randomize_torques = True
         torque_multiplier_range = [0.8, 1.1]
-        randomize_com = False
+        randomize_com = True
         com_range = [-0.1, 0.1]
 
     class noise:
-        add_noise = False
+        add_noise = True
         noise_level = 1.0  # scales other values
 
         class noise_scales:
