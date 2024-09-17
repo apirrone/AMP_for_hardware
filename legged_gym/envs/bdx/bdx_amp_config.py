@@ -214,7 +214,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         randomize_torques = True
         torque_multiplier_range = [0.8, 1.1]
         randomize_com = True
-        com_range = [-0.04, 0.04]
+        com_range = [-0.1, 0.1]
 
     class noise:
         add_noise = True
