@@ -35,6 +35,8 @@ from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobot
 # MOTION_FILES = glob.glob("datasets/bdx/new_placo_moves/*")
 MOTION_FILES = [
     "datasets/bdx/placo_moves_lower_freq/bdx_walk_forward.txt",
+    "datasets/bdx/placo_moves_lower_freq/bdx_turn_left.txt",
+    "datasets/bdx/placo_moves_lower_freq/bdx_turn_right.txt",
     # "datasets/bdx/new_new_placo_moves/bdx_walk_forward.txt",  # OK
     # "datasets/bdx/new_new_placo_moves/bdx_turn_left.txt",
     # "datasets/bdx/new_new_placo_moves/bdx_turn_right.txt",
@@ -263,9 +265,9 @@ class BDXAMPCfg(LeggedRobotCfg):
         heading_command = False  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [0.16, 0.16]  # min max [m/s]
+            lin_vel_x = [0.0, 0.16]  # min max [m/s]
             lin_vel_y = [0.0, 0.0]  # min max [m/s]
-            ang_vel_yaw = [0.0, 0.0]  # min max [rad/s]
+            ang_vel_yaw = [-0.5, 0.5]  # min max [rad/s]
             heading = [0, 0]
             # lin_vel_x = [0.1, 0.2]  # min max [m/s]
             # lin_vel_y = [0.0, 0.0]  # min max [m/s]
@@ -309,7 +311,7 @@ class BDXAMPCfgPPO(LeggedRobotCfgPPO):
         amp_task_reward_lerp = 0.2  # 0.3
         amp_discr_hidden_dims = [1024, 512]
 
-        disc_grad_penalty = 0.01  # original 10 # TUNE ?
+        disc_grad_penalty = 0.1  # original 10 # TUNE ?
 
         # min_normalized_std = [0.05, 0.02, 0.05] * 4
 
