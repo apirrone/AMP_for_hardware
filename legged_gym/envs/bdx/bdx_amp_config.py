@@ -311,7 +311,7 @@ class BDXAMPCfgPPO(LeggedRobotCfgPPO):
         amp_task_reward_lerp = 0.3  # 0.3
         amp_discr_hidden_dims = [1024, 512]
 
-        disc_grad_penalty = 10  # original 10 # TUNE ?
+        disc_grad_penalty = 1  # original 10 # TUNE ?
 
         # min_normalized_std = [0.05, 0.02, 0.05] * 4
 
