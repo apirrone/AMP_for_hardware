@@ -44,8 +44,8 @@ def play(args):
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 50)
 
-    env_cfg.env.get_commands_from_joystick = True
-    env_cfg.env.get_commands_from_keyboard = False
+    env_cfg.env.get_commands_from_joystick = False
+    env_cfg.env.get_commands_from_keyboard = True
 
     env_cfg.terrain.num_rows = 5
     env_cfg.terrain.num_cols = 5
