@@ -147,7 +147,8 @@ class AMPOnPolicyRunner:
             critic_obs.to(self.device),
             amp_obs.to(self.device),
         )
-        if rma_obs is not None: rma_obs.to(self.device)
+        if rma_obs is not None:
+            rma_obs.to(self.device)
         self.alg.actor_critic.train()  # switch to train mode (for dropout for example)
         self.alg.discriminator.train()
 
@@ -187,8 +188,8 @@ class AMPOnPolicyRunner:
                         rewards.to(self.device),
                         dones.to(self.device),
                     )
-                    if infos['dynamics_states'] is not None: 
-                        rma_obs = infos['dynamics_states'].to(self.device)
+                    if infos["dynamics_states"] is not None:
+                        rma_obs = infos["dynamics_states"].to(self.device)
 
                     # Account for terminal states.
                     next_amp_obs_with_term = torch.clone(next_amp_obs)

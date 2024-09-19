@@ -1544,8 +1544,10 @@ class LeggedRobot(BaseTask):
             priv_dynamics_obs = torch.cat(
                 (
                     priv_dynamics_obs,
-                    (self.friction_coeffs[:, 0] - friction_coeffs_shift)
-                    * friction_coeffs_scale,
+                    (
+                        (self.friction_coeffs[:, 0] - friction_coeffs_shift)
+                        * friction_coeffs_scale
+                    ).to(self.device),
                 ),
                 dim=1,
             )
@@ -1557,7 +1559,9 @@ class LeggedRobot(BaseTask):
             priv_dynamics_obs = torch.cat(
                 (
                     priv_dynamics_obs,
-                    (self.randomize_mass.unsqueeze(1) - mass_shift) * mass_scale,
+                    ((self.randomize_mass.unsqueeze(1) - mass_shift) * mass_scale).to(
+                        self.device
+                    ),
                 ),
                 dim=1,
             )
@@ -1567,7 +1571,9 @@ class LeggedRobot(BaseTask):
             priv_dynamics_obs = torch.cat(
                 (
                     priv_dynamics_obs,
-                    (self.randomize_com_values - com_shift) * com_scale,
+                    ((self.randomize_com_values - com_shift) * com_scale).to(
+                        self.device
+                    ),
                 ),
                 dim=1,
             )
@@ -1579,8 +1585,10 @@ class LeggedRobot(BaseTask):
             priv_dynamics_obs = torch.cat(
                 (
                     priv_dynamics_obs,
-                    (self.randomize_torques_factors - torque_factor_shift)
-                    * torque_factor_scale,
+                    (
+                        (self.randomize_torques_factors - torque_factor_shift)
+                        * torque_factor_scale
+                    ).to(self.device),
                 ),
                 dim=1,
             )

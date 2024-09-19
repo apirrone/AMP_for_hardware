@@ -35,6 +35,8 @@ from torch.distributions import Normal
 from torch.nn.modules import rnn
 
 RMA_ENC_LAYERS = [256, 128, 4]
+
+
 class ActorCritic(nn.Module):
     is_recurrent = False
 
@@ -44,7 +46,7 @@ class ActorCritic(nn.Module):
         num_critic_obs,
         num_actions,
         actor_hidden_dims=[256, 256, 256],
-        critic_hidden_dims=[256, 256, 256], 
+        critic_hidden_dims=[256, 256, 256],
         activation="elu",
         init_noise_std=1.0,
         fixed_std=False,
@@ -69,7 +71,9 @@ class ActorCritic(nn.Module):
 
         # Policy
         actor_layers = []
-        actor_layers.append(nn.Linear(mlp_input_dim_a + latent_dim, actor_hidden_dims[0]))
+        actor_layers.append(
+            nn.Linear(mlp_input_dim_a + latent_dim, actor_hidden_dims[0])
+        )
         actor_layers.append(activation)
         for l in range(len(actor_hidden_dims)):
             if l == len(actor_hidden_dims) - 1:
@@ -83,7 +87,9 @@ class ActorCritic(nn.Module):
 
         # Value function
         critic_layers = []
-        critic_layers.append(nn.Linear(mlp_input_dim_c + latent_dim, critic_hidden_dims[0]))
+        critic_layers.append(
+            nn.Linear(mlp_input_dim_c + latent_dim, critic_hidden_dims[0])
+        )
         critic_layers.append(activation)
         for l in range(len(critic_hidden_dims)):
             if l == len(critic_hidden_dims) - 1:
@@ -102,20 +108,14 @@ class ActorCritic(nn.Module):
         self.rma_encoder = None
         if latent_dim > 0:
             rma_enc_layers = []
-            rma_enc_layers.append(
-                nn.Linear(num_rma_obs, rma_enc_dims[0])
-            )
+            rma_enc_layers.append(nn.Linear(num_rma_obs, rma_enc_dims[0]))
             rma_enc_layers.append(activation)
             for l in range(len(rma_enc_dims)):
                 if l == len(rma_enc_dims) - 1:
-                    rma_enc_layers.append(
-                        nn.Linear(rma_enc_dims[l], latent_dim)
-                    )
+                    rma_enc_layers.append(nn.Linear(rma_enc_dims[l], latent_dim))
                 else:
                     rma_enc_layers.append(
-                        nn.Linear(
-                            rma_enc_dims[l], rma_enc_dims[l + 1]
-                        )
+                        nn.Linear(rma_enc_dims[l], rma_enc_dims[l + 1])
                     )
                     rma_enc_layers.append(activation)
             self.rma_encoder = nn.Sequential(*rma_enc_layers)
@@ -165,6 +165,9 @@ class ActorCritic(nn.Module):
     def update_distribution(self, observations, rma_obs=None):
         if rma_obs is not None:
             latent = self.rma_encoder(rma_obs)
+            print(observations.shape)
+            print(latent.shape)
+            print("=")
             mean = self.actor(torch.cat((observations, latent), dim=1))
         else:
             mean = self.actor(observations)
