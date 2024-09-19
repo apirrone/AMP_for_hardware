@@ -192,7 +192,9 @@ class AMPPPO:
 
     def compute_returns(self, last_critic_obs, last_rma_obs):
         aug_last_critic_obs = last_critic_obs.detach()
-        aug_last_rma_obs = last_rma_obs.detach()
+        aug_last_rma_obs = None
+        if last_rma_obs is not None:
+            aug_last_rma_obs = last_rma_obs.detach()
         last_values = self.actor_critic.evaluate(
             aug_last_critic_obs, aug_last_rma_obs
         ).detach()
