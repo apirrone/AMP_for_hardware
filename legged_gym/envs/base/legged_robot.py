@@ -124,6 +124,8 @@ class LeggedRobot(BaseTask):
         if self.cfg.env.debug_save_obs:
             self.saved_obs = []
 
+        self.num_rma_obs = self.cfg.env.num_rma_obs
+
     def reset(self):
         """Reset all robots"""
         self.reset_idx(torch.arange(self.num_envs, device=self.device))
@@ -219,7 +221,7 @@ class LeggedRobot(BaseTask):
 
         self.envs_times[:] += self.dt * (self.envs_cooldowns > 0.5)
 
-        self.extras['dynamics_states'] = self._get_privileged_dynamics_state()
+        self.extras["dynamics_states"] = self._get_privileged_dynamics_state()
 
         return (
             policy_obs,
@@ -1294,10 +1296,8 @@ class LeggedRobot(BaseTask):
                 self.num_envs, 3, device=self.device
             )
 
-            self.randomize_mass = torch.zeros(
-                self.num_envs, device=self.device
-            )
-            
+            self.randomize_mass = torch.zeros(self.num_envs, device=self.device)
+
             rigid_shape_props = self._process_rigid_shape_props(
                 rigid_shape_props_asset, i
             )
@@ -1531,12 +1531,11 @@ class LeggedRobot(BaseTask):
 
         return heights.view(self.num_envs, -1) * self.terrain.cfg.vertical_scale
 
-
     def _get_privileged_dynamics_state(self):
         ## Collect a privileged obs buffer of dynamics parameters
         if self.cfg.env.num_rma_obs == 0:
             return None
-        
+
         priv_dynamics_obs = torch.empty(self.num_envs, 0).to(self.device)
         if self.cfg.domain_rand.randomize_friction:
             friction_coeffs_scale, friction_coeffs_shift = get_scale_shift(
@@ -1550,7 +1549,7 @@ class LeggedRobot(BaseTask):
                 ),
                 dim=1,
             )
-        
+
         if self.cfg.domain_rand.randomize_base_mass:
             mass_scale, mass_shift = get_scale_shift(
                 self.cfg.domain_rand.added_mass_range
@@ -1562,7 +1561,7 @@ class LeggedRobot(BaseTask):
                 ),
                 dim=1,
             )
-        
+
         if self.cfg.domain_rand.randomize_com:
             com_scale, com_shift = get_scale_shift(self.cfg.domain_rand.com_range)
             priv_dynamics_obs = torch.cat(
@@ -1572,7 +1571,7 @@ class LeggedRobot(BaseTask):
                 ),
                 dim=1,
             )
-        
+
         if self.cfg.domain_rand.randomize_torques:
             torque_factor_scale, torque_factor_shift = get_scale_shift(
                 self.cfg.domain_rand.torque_multiplier_range
@@ -1588,9 +1587,9 @@ class LeggedRobot(BaseTask):
 
         if priv_dynamics_obs.shape[-1] == 0:
             return None
-        
+
         return priv_dynamics_obs
-    
+
     # ------------ reward functions----------------
     def _reward_lin_vel_z(self):
         # Penalize z axis base linear velocity
