@@ -64,8 +64,6 @@ class BDXAMPCfg(LeggedRobotCfg):
         debug_save_obs = False
         no_feet = NO_FEET
 
-        num_rma_obs = 0
-
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, 0.16]  # x,y,z [m]
         # pos = [0.0, 0.0, 0.3]  # x,y,z [m]
@@ -210,12 +208,12 @@ class BDXAMPCfg(LeggedRobotCfg):
         friction_range = [0.8, 1.2]
         randomize_base_mass = False
         added_mass_range = [-0.1, 0.1]
-        # push_robots = False
-        # push_interval_s = 15
-        # max_push_vel_xy = 0.5  # 0.3
-        # randomize_gains = False
-        # stiffness_multiplier_range = [0.95, 1.05]
-        # damping_multiplier_range = [0.95, 1.05]
+        push_robots = False
+        push_interval_s = 15
+        max_push_vel_xy = 0.5  # 0.3
+        randomize_gains = False
+        stiffness_multiplier_range = [0.95, 1.05]
+        damping_multiplier_range = [0.95, 1.05]
         randomize_torques = False
         torque_multiplier_range = [0.8, 1.2]
         randomize_com = False
