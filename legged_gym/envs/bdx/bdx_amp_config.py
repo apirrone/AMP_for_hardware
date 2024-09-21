@@ -222,15 +222,15 @@ class BDXAMPCfg(LeggedRobotCfg):
         com_range = [-0.01, 0.01]
 
     class noise:
-        add_noise = False
+        add_noise = True
         noise_level = 1.0  # scales other values
 
         class noise_scales:
-            dof_pos = 0.05
-            dof_vel = 0.05  # 1.5
-            lin_vel = 0.05
-            ang_vel = 0.05
-            gravity = 0.05
+            dof_pos = 0.1
+            dof_vel = 0.1  # 1.5
+            lin_vel = 0.1
+            ang_vel = 0.1
+            gravity = 0.1
             height_measurements = 0.1
 
     class rewards(LeggedRobotCfg.rewards):
@@ -267,9 +267,9 @@ class BDXAMPCfg(LeggedRobotCfg):
         heading_command = False  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [0.13, 0.13]  # min max [m/s]
-            lin_vel_y = [0.0, 0.0]  # min max [m/s]
-            ang_vel_yaw = [0.0, 0.0]  # min max [rad/s]
+            lin_vel_x = [0.0, 0.16]  # min max [m/s]
+            lin_vel_y = [-0.1, 0.1]  # min max [m/s]
+            ang_vel_yaw = [-0.4, 0.4]  # min max [rad/s]
             heading = [0, 0]
             # lin_vel_x = [0.1, 0.2]  # min max [m/s]
             # lin_vel_y = [0.0, 0.0]  # min max [m/s]
@@ -310,7 +310,7 @@ class BDXAMPCfgPPO(LeggedRobotCfgPPO):
         amp_reward_coef = 2.0  # 2.0
         amp_motion_files = MOTION_FILES
         amp_num_preload_transitions = 2000000
-        amp_task_reward_lerp = 0.3  # 0.3
+        amp_task_reward_lerp = 0.2  # 0.3
         amp_discr_hidden_dims = [1024, 512]
 
         disc_grad_penalty = 0.01  # original 10 # TUNE ?
