@@ -34,7 +34,7 @@ import torch.nn as nn
 from torch.distributions import Normal
 from torch.nn.modules import rnn
 
-RMA_ENC_LAYERS = [256, 128, 4]
+RMA_ENC_LAYERS = [256, 128, 18]
 
 
 class ActorCritic(nn.Module):
