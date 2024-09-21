@@ -220,6 +220,9 @@ class ActorCritic(nn.Module):
         actions_mean = self.actor(torch.cat((observations, latent), dim=1))
         return actions_mean
 
+    def adaptation_module_inference(self, observation_history):
+        return self.adaptation_module(observation_history)
+
 
 def get_activation(act_name):
     if act_name == "elu":

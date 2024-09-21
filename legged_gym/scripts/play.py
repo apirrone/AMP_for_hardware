@@ -68,12 +68,14 @@ def play(args):
     env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
     _, _ = env.reset()
     obs = env.get_observations()
+    obs_buf_history = env.get_observations_history()
     # load policy
     train_cfg.runner.resume = True
     ppo_runner, train_cfg = task_registry.make_alg_runner(
         env=env, name=args.task, args=args, train_cfg=train_cfg
     )
     policy = ppo_runner.get_inference_policy(device=env.device)
+    adaptation_module = ppo_runner.get_adaptation_module_policy(device=env.device)
 
     # export policy as a jit module (used to run it from C++)
     if EXPORT_POLICY:
@@ -100,12 +102,14 @@ def play(args):
     img_idx = 0
 
     for i in range(10 * int(env.max_episode_length)):
-        latent = torch.zeros((env.num_envs, 4)).to(device=env.device)
+        # latent = torch.zeros((env.num_envs, 4)).to(device=env.device)
+        latent = adaptation_module(obs_buf_history.detach())
         policy_input = torch.cat((obs, latent), dim=-1)
 
         actions = policy(policy_input.detach())
 
         obs, _, rews, dones, infos, _, _ = env.step(actions.detach())
+        obs_buf_history = env.get_observations_history()
         if RECORD_FRAMES:
             if i % 2:
                 filename = os.path.join(

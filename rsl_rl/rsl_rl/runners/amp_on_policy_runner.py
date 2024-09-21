@@ -397,3 +397,9 @@ class AMPOnPolicyRunner:
         if device is not None:
             self.alg.actor_critic.to(device)
         return self.alg.actor_critic.act_inference
+
+    def get_adaptation_module_policy(self, device=None):
+        self.alg.actor_critic.eval()
+        if device is not None:
+            self.alg.actor_critic.to(device)
+        return self.alg.actor_critic.adaptation_module_inference
