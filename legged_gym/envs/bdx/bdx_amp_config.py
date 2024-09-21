@@ -210,9 +210,9 @@ class BDXAMPCfg(LeggedRobotCfg):
 
     class domain_rand:
         randomize_friction = True
-        friction_range = [0.8, 1.2]
+        friction_range = [0.5, 1.5]
         randomize_base_mass = True
-        added_mass_range = [-0.1, 0.1]
+        added_mass_range = [-0.2, 0.2]
         push_robots = False
         push_interval_s = 15
         max_push_vel_xy = 0.5  # 0.3
@@ -220,9 +220,9 @@ class BDXAMPCfg(LeggedRobotCfg):
         stiffness_multiplier_range = [0.95, 1.05]
         damping_multiplier_range = [0.95, 1.05]
         randomize_torques = True
-        torque_multiplier_range = [0.8, 1.2]
+        torque_multiplier_range = [0.6, 1.4]
         randomize_com = True
-        com_range = [-0.05, 0.05]
+        com_range = [-0.1, 0.1]
 
     class noise:
         add_noise = True
@@ -271,8 +271,8 @@ class BDXAMPCfg(LeggedRobotCfg):
 
         class ranges:
             lin_vel_x = [0.0, 0.16]  # min max [m/s]
-            lin_vel_y = [0.0, 0.0]  # min max [m/s]
-            ang_vel_yaw = [-0.0, 0.0]  # min max [rad/s]
+            lin_vel_y = [-0.1, 0.1]  # min max [m/s]
+            ang_vel_yaw = [-0.4, 0.4]  # min max [rad/s]
             heading = [0, 0]
             # lin_vel_x = [0.1, 0.2]  # min max [m/s]
             # lin_vel_y = [0.0, 0.0]  # min max [m/s]
