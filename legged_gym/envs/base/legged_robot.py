@@ -419,7 +419,7 @@ class LeggedRobot(BaseTask):
                         torch.tensor(self.command_ranges["lin_vel_x"][0])
                     )
 
-                lin_vel_y = -1 * self._p1.get_axis(3)
+                lin_vel_y = -1 * self._p1.get_axis(0)
                 if lin_vel_y >= 0:
                     lin_vel_y *= torch.abs(
                         torch.tensor(self.command_ranges["lin_vel_y"][1])
@@ -429,7 +429,7 @@ class LeggedRobot(BaseTask):
                         torch.tensor(self.command_ranges["lin_vel_y"][0])
                     )
 
-                ang_vel = -1 * self._p1.get_axis(0)
+                ang_vel = -1 * self._p1.get_axis(3)
                 if ang_vel >= 0:
                     ang_vel *= torch.abs(
                         torch.tensor(self.command_ranges["ang_vel_yaw"][1])
