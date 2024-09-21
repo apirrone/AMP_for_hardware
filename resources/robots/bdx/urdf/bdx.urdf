@@ -1197,7 +1197,7 @@
         <parent link="leg_module_2" />
         <child link="foot_module" />
         <axis xyz="0 0 1"/>
-        <limit effort="0.93" velocity="8.48" lower="-1.570796326794896558" upper="1.570796326794896558"/>
+        <limit effort="0.75" velocity="8.48" lower="-1.570796326794896558" upper="1.570796326794896558"/>
         <joint_properties friction="0.1"/>
     </joint>
     <joint name="right_knee" type="revolute">
@@ -1205,7 +1205,7 @@
         <parent link="leg_module" />
         <child link="leg_module_2" />
         <axis xyz="0 0 1"/>
-        <limit effort="0.93" velocity="8.48" lower="-2.0943951023931952626" upper="2.0943951023931952626"/>
+        <limit effort="0.75" velocity="8.48" lower="-2.0943951023931952626" upper="2.0943951023931952626"/>
         <joint_properties friction="0.1"/>
     </joint>
     <joint name="right_hip_pitch" type="revolute">
@@ -1213,7 +1213,7 @@
         <parent link="right_hip_pitch_roll_module" />
         <child link="leg_module" />
         <axis xyz="0 0 1"/>
-        <limit effort="0.93" velocity="8.48" lower="-0.52359877559829881566" upper="1.570796326794896558"/>
+        <limit effort="0.75" velocity="8.48" lower="-0.52359877559829881566" upper="1.570796326794896558"/>
         <joint_properties friction="0.1"/>
     </joint>
     <joint name="right_hip_roll" type="revolute">
@@ -1221,7 +1221,7 @@
         <parent link="double_u_module" />
         <child link="right_hip_pitch_roll_module" />
         <axis xyz="0 0 1"/>
-        <limit effort="0.93" velocity="8.48" lower="-1.570796326794896558" upper="0.43633231299858238339"/>
+        <limit effort="0.75" velocity="8.48" lower="-1.570796326794896558" upper="0.43633231299858238339"/>
         <joint_properties friction="0.1"/>
     </joint>
     <joint name="right_hip_yaw" type="revolute">
@@ -1229,7 +1229,7 @@
         <parent link="body_module" />
         <child link="double_u_module" />
         <axis xyz="0 0 1"/>
-        <limit effort="0.93" velocity="8.48" lower="-0.69813170079773179122" upper="0.69813170079773179122"/>
+        <limit effort="0.75" velocity="8.48" lower="-0.69813170079773179122" upper="0.69813170079773179122"/>
         <joint_properties friction="0.1"/>
     </joint>
     <link name="double_u_module_2">
@@ -1765,7 +1765,7 @@
         <parent link="leg_module_4" />
         <child link="foot_module_2" />
         <axis xyz="0 0 1"/>
-        <limit effort="0.93" velocity="8.48" lower="-1.570796326794896558" upper="1.570796326794896558"/>
+        <limit effort="0.75" velocity="8.48" lower="-1.570796326794896558" upper="1.570796326794896558"/>
         <joint_properties friction="0.1"/>
     </joint>
     <joint name="left_knee" type="revolute">
@@ -1773,7 +1773,7 @@
         <parent link="leg_module_3" />
         <child link="leg_module_4" />
         <axis xyz="0 0 1"/>
-        <limit effort="0.93" velocity="8.48" lower="-2.0943951023931952626" upper="2.0943951023931952626"/>
+        <limit effort="0.75" velocity="8.48" lower="-2.0943951023931952626" upper="2.0943951023931952626"/>
         <joint_properties friction="0.1"/>
     </joint>
     <joint name="left_hip_pitch" type="revolute">
@@ -1781,7 +1781,7 @@
         <parent link="left_hip_pitch_roll_module" />
         <child link="leg_module_3" />
         <axis xyz="0 0 1"/>
-        <limit effort="0.93" velocity="8.48" lower="-0.52359877559829881566" upper="1.570796326794896558"/>
+        <limit effort="0.75" velocity="8.48" lower="-0.52359877559829881566" upper="1.570796326794896558"/>
         <joint_properties friction="0.1"/>
     </joint>
     <joint name="left_hip_roll" type="revolute">
@@ -1789,7 +1789,7 @@
         <parent link="double_u_module_2" />
         <child link="left_hip_pitch_roll_module" />
         <axis xyz="0 0 1"/>
-        <limit effort="0.93" velocity="8.48" lower="-1.570796326794896558" upper="0.43633231299858238339"/>
+        <limit effort="0.75" velocity="8.48" lower="-1.570796326794896558" upper="0.43633231299858238339"/>
         <joint_properties friction="0.1"/>
     </joint>
     <joint name="left_hip_yaw" type="revolute">
@@ -1797,7 +1797,7 @@
         <parent link="body_module" />
         <child link="double_u_module_2" />
         <axis xyz="0 0 1"/>
-        <limit effort="0.93" velocity="8.48" lower="-0.69813170079773179122" upper="0.69813170079773179122"/>
+        <limit effort="0.75" velocity="8.48" lower="-0.69813170079773179122" upper="0.69813170079773179122"/>
         <joint_properties friction="0.1"/>
     </joint>
     <link name="head_link">
@@ -2259,7 +2259,7 @@
         <parent link="head_pitch_yaw" />
         <child link="head_assembly" />
         <axis xyz="0 0 1"/>
-        <limit effort="0.52" velocity="10.7" lower="-2.0943951023931952626" upper="2.0943951023931952626"/>
+        <limit effort="0.4" velocity="10.7" lower="-2.0943951023931952626" upper="2.0943951023931952626"/>
         <joint_properties friction="0.1"/>
     </joint>
     <joint name="head_pitch" type="revolute">
@@ -2267,7 +2267,7 @@
         <parent link="head_link" />
         <child link="head_pitch_yaw" />
         <axis xyz="0 0 1"/>
-        <limit effort="0.52" velocity="10.7" lower="-0.69813170079773179122" upper="0.69813170079773179122"/>
+        <limit effort="0.4" velocity="10.7" lower="-0.69813170079773179122" upper="0.69813170079773179122"/>
         <joint_properties friction="0.1"/>
     </joint>
     <joint name="neck_pitch" type="revolute">
@@ -2275,7 +2275,7 @@
         <parent link="body_module" />
         <child link="head_link" />
         <axis xyz="0 0 1"/>
-        <limit effort="0.52" velocity="10.7" lower="-1.3089969389957472057" upper="0.1745329251994329478"/>
+        <limit effort="0.4" velocity="10.7" lower="-1.3089969389957472057" upper="0.1745329251994329478"/>
         <joint_properties friction="0.1"/>
     </joint>
 </robot>
