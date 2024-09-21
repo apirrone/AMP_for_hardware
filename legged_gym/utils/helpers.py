@@ -245,21 +245,40 @@ def export_policy_as_jit(actor_critic, path):
         exporter.export(path)
     else:
         os.makedirs(path, exist_ok=True)
-        path = os.path.join(path, "policy_1.pt")
+        # path = os.path.join(path, "policy_1.pt")
         model = copy.deepcopy(actor_critic.actor).to("cpu")
         traced_script_module = torch.jit.script(model)
-        traced_script_module.save(path)
+        # traced_script_module.save(path)
 
-        # dummy_input = torch.zeros((51), device="cpu")
+        adaptation_module = copy.deepcopy(actor_critic.adaptation_module).to("cpu")
+        traced_script_module_adaptation = torch.jit.script(adaptation_module)
 
-        # torch.onnx.export(
-        #     traced_script_module,
-        #     dummy_input,
-        #     "ONNX.onnx",
-        #     verbose=True,
-        #     input_names=["obs"],
-        #     output_names=["actions"],
-        # )
+        nb_obs = 51
+        nb_history_steps = 15
+        nb_latent = 4
+
+        dummy_input_model = torch.zeros((nb_obs + nb_latent), device="cpu")
+        dummy_input_model_adaptation = torch.zeros(
+            (nb_obs * nb_history_steps), device="cpu"
+        )
+
+        torch.onnx.export(
+            traced_script_module,
+            dummy_input_model,
+            "ONNX.onnx",
+            verbose=True,
+            input_names=["obs"],
+            output_names=["actions"],
+        )
+
+        torch.onnx.export(
+            traced_script_module_adaptation,
+            dummy_input_model_adaptation,
+            "ADAPTATION.onnx",
+            verbose=True,
+            input_names=["obs_history"],
+            output_names=["latent"],
+        )
 
 
 class PolicyExporterLSTM(torch.nn.Module):
