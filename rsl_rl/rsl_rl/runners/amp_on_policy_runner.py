@@ -58,15 +58,16 @@ class AMPOnPolicyRunner:
         else:
             num_critic_obs = self.env.num_obs
         actor_critic_class = eval(self.cfg["policy_class_name"])  # ActorCritic
-        if self.env.include_history_steps is not None:
-            num_actor_obs = self.env.num_obs * self.env.include_history_steps
-        else:
-            num_actor_obs = self.env.num_obs
+        # if self.env.include_history_steps is not None:
+        #     num_actor_obs = self.env.num_obs * self.env.include_history_steps
+        # else:
+        num_actor_obs = self.env.num_obs
         actor_critic: ActorCritic = actor_critic_class(
             num_actor_obs=num_actor_obs,
             num_critic_obs=num_critic_obs,
             num_actions=self.env.num_actions,
             num_rma_obs=self.env.num_rma_obs,
+            num_history_obs=self.env.num_obs * self.env.include_history_steps,
             **self.policy_cfg,
         ).to(self.device)
 
@@ -106,6 +107,7 @@ class AMPOnPolicyRunner:
             min_std=min_std,
             disc_grad_penalty=train_cfg["runner"]["disc_grad_penalty"],
             num_rma_obs=self.env.num_rma_obs,
+            num_history_obs=self.env.num_obs * self.env.include_history_steps,
             **self.alg_cfg,
         )
         self.num_steps_per_env = self.cfg["num_steps_per_env"]
@@ -141,6 +143,7 @@ class AMPOnPolicyRunner:
         privileged_obs = self.env.get_privileged_observations()
         amp_obs = self.env.get_amp_observations()
         rma_obs = self.env._get_privileged_dynamics_state()
+        obs_history = self.env.get_observations_history()
         critic_obs = privileged_obs if privileged_obs is not None else obs
         obs, critic_obs, amp_obs = (
             obs.to(self.device),
@@ -168,7 +171,9 @@ class AMPOnPolicyRunner:
             # Rollout
             with torch.inference_mode():
                 for i in range(self.num_steps_per_env):
-                    actions = self.alg.act(obs, critic_obs, amp_obs, rma_obs)
+                    actions = self.alg.act(
+                        obs, critic_obs, amp_obs, rma_obs, obs_history
+                    )
                     (
                         obs,
                         privileged_obs,
@@ -179,6 +184,7 @@ class AMPOnPolicyRunner:
                         terminal_amp_states,
                     ) = self.env.step(actions)
                     next_amp_obs = self.env.get_amp_observations()
+                    obs_history = self.env.get_observations_history()
 
                     critic_obs = privileged_obs if privileged_obs is not None else obs
                     obs, critic_obs, next_amp_obs, rewards, dones = (
@@ -236,6 +242,7 @@ class AMPOnPolicyRunner:
                 mean_grad_pen_loss,
                 mean_policy_pred,
                 mean_expert_pred,
+                mean_adaptation_module_loss,
             ) = self.alg.update()
             stop = time.time()
             learn_time = stop - start
@@ -284,6 +291,10 @@ class AMPOnPolicyRunner:
         self.writer.add_scalar(
             "Loss/surrogate", locs["mean_surrogate_loss"], locs["it"]
         )
+
+        self.writer.add_scalar(
+            "Loss/adaptation_module", locs["mean_adaptation_module_loss"], locs["it"]
+        )
         self.writer.add_scalar("Loss/AMP", locs["mean_amp_loss"], locs["it"])
         self.writer.add_scalar("Loss/AMP_grad", locs["mean_grad_pen_loss"], locs["it"])
         self.writer.add_scalar("Loss/learning_rate", self.alg.learning_rate, locs["it"])
@@ -327,6 +338,7 @@ class AMPOnPolicyRunner:
                 f"""{'AMP grad pen loss:':>{pad}} {locs['mean_grad_pen_loss']:.4f}\n"""
                 f"""{'AMP mean policy pred:':>{pad}} {locs['mean_policy_pred']:.4f}\n"""
                 f"""{'AMP mean expert pred:':>{pad}} {locs['mean_expert_pred']:.4f}\n"""
+                f"""{'Adaptation module loss:':>{pad}} {locs['mean_adaptation_module_loss']:.4f}\n"""
                 f"""{'Mean action noise std:':>{pad}} {mean_std.item():.2f}\n"""
                 f"""{'Mean reward:':>{pad}} {statistics.mean(locs['rewbuffer']):.2f}\n"""
                 f"""{'Mean episode length:':>{pad}} {statistics.mean(locs['lenbuffer']):.2f}\n"""
@@ -384,5 +396,4 @@ class AMPOnPolicyRunner:
         self.alg.actor_critic.eval()  # switch to evaluation mode (dropout for example)
         if device is not None:
             self.alg.actor_critic.to(device)
-        return self.alg.actor_critic.act_inference
         return self.alg.actor_critic.act_inference

@@ -49,7 +49,6 @@ NO_FEET = False  # Do not use feet in the amp observations and data
 class BDXAMPCfg(LeggedRobotCfg):
     class env(LeggedRobotCfg.env):
         num_envs = 8
-        include_history_steps = None  # Number of steps of history to include.
         num_observations = 51  # TODO what ?
         num_privileged_obs = 57
         num_actions = 15
@@ -66,6 +65,9 @@ class BDXAMPCfg(LeggedRobotCfg):
 
         # num_rma_obs = 0
         num_rma_obs = 20
+
+        # TODO repair things when no rma obs and no history steps
+        include_history_steps = None if num_rma_obs == 0 else 15
 
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, 0.16]  # x,y,z [m]

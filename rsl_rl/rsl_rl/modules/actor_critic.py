@@ -51,6 +51,7 @@ class ActorCritic(nn.Module):
         init_noise_std=1.0,
         fixed_std=False,
         num_rma_obs=0,
+        num_history_obs=0,
         **kwargs,
     ):
         if kwargs:
@@ -119,8 +120,23 @@ class ActorCritic(nn.Module):
                     )
                     rma_enc_layers.append(activation)
             self.rma_encoder = nn.Sequential(*rma_enc_layers)
+            print(f"Priv RMA MLP: {self.rma_encoder}")
 
-        print(f"Priv RMA MLP: {self.rma_encoder}")
+        self.adaptation_module = None
+        if latent_dim > 0:
+            adapt_enc_layers = []
+            adapt_enc_layers.append(nn.Linear(num_history_obs, rma_enc_dims[0]))
+            adapt_enc_layers.append(activation)
+            for l in range(len(rma_enc_dims)):
+                if l == len(rma_enc_dims) - 1:
+                    adapt_enc_layers.append(nn.Linear(rma_enc_dims[l], latent_dim))
+                else:
+                    adapt_enc_layers.append(
+                        nn.Linear(rma_enc_dims[l], rma_enc_dims[l + 1])
+                    )
+                    adapt_enc_layers.append(activation)
+            self.adaptation_module = nn.Sequential(*adapt_enc_layers)
+            print(f"Adaptation MLP: {self.adaptation_module}")
 
         # Action noise
         self.fixed_std = fixed_std
@@ -193,6 +209,16 @@ class ActorCritic(nn.Module):
         else:
             value = self.critic(critic_observations)
         return value
+
+    def act_student(self, observations, observation_history, policy_info={}):
+        latent = self.adaptation_module(observation_history)
+        actions_mean = self.actor(torch.cat((observations, latent), dim=1))
+        return actions_mean
+
+    def act_teacher(self, observations, rma_obs, policy_info={}):
+        latent = self.rma_encoder(rma_obs)
+        actions_mean = self.actor(torch.cat((observations, latent), dim=1))
+        return actions_mean
 
 
 def get_activation(act_name):

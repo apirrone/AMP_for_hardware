@@ -48,6 +48,7 @@ class RolloutStorage:
             self.action_sigma = None
             self.hidden_states = None
             self.rma_observations = None
+            self.observation_histories = None
 
         def clear(self):
             self.__init__()
@@ -61,6 +62,7 @@ class RolloutStorage:
         actions_shape,
         device="cpu",
         num_rma_obs=0,
+        num_history_obs=0,
     ):
         self.device = device
 
@@ -124,6 +126,16 @@ class RolloutStorage:
             self.rma_observations = torch.zeros(
                 num_transitions_per_env, num_envs, num_rma_obs, device=self.device
             )
+        self.observation_histories = torch.zeros(
+            num_transitions_per_env,
+            num_envs,
+            num_history_obs,
+            device=self.device,
+        )
+        # TODO maybe *history_obs_shape
+        # self.observation_histories = torch.zeros(
+        #     num_transitions_per_env, num_envs, num_history_obs, device=self.device
+        # )
 
         self.step = 0
 
@@ -145,6 +157,7 @@ class RolloutStorage:
         self._save_hidden_states(transition.hidden_states)
         if self.rma_observations is not None:
             self.rma_observations[self.step].copy_(transition.rma_observations)
+        self.observation_histories[self.step].copy_(transition.observation_histories)
         self.step += 1
 
     def _save_hidden_states(self, hidden_states):
@@ -236,6 +249,8 @@ class RolloutStorage:
         if self.rma_observations is not None:
             rma_observations = self.rma_observations.flatten(0, 1)
 
+        obs_history = self.observation_histories.flatten(0, 1)
+
         actions = self.actions.flatten(0, 1)
         values = self.values.flatten(0, 1)
         returns = self.returns.flatten(0, 1)
@@ -264,7 +279,8 @@ class RolloutStorage:
                     if rma_observations is not None
                     else None
                 )
-                yield obs_batch, critic_observations_batch, actions_batch, target_values_batch, advantages_batch, returns_batch, old_actions_log_prob_batch, old_mu_batch, old_sigma_batch, rma_observations_batch, (
+                obs_history_batch = obs_history[batch_idx]
+                yield obs_batch, critic_observations_batch, actions_batch, target_values_batch, advantages_batch, returns_batch, old_actions_log_prob_batch, old_mu_batch, old_sigma_batch, rma_observations_batch, obs_history_batch, (
                     None,
                     None,
                 ), None

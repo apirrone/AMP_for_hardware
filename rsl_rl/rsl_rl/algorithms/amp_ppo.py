@@ -35,6 +35,7 @@ import torch.optim as optim
 from rsl_rl.modules import ActorCritic
 from rsl_rl.storage import RolloutStorage
 from rsl_rl.storage.replay_buffer import ReplayBuffer
+import torch.nn.functional as F
 
 
 class AMPPPO:
@@ -65,6 +66,7 @@ class AMPPPO:
         disc_coef=5,
         bounds_loss_coef=None,
         num_rma_obs=0,
+        num_history_obs=0,
     ):
         self.device = device
 
@@ -121,6 +123,14 @@ class AMPPPO:
 
         # RMA if num rma obs is zero -> disabled
         self.num_rma_obs = num_rma_obs
+        self.num_history_obs = num_history_obs
+
+        # adaptation module parameters
+        self.adaptation_module_learning_rate = 1.0e-3
+        self.adaptation_module_optimizer = optim.Adam(
+            self.actor_critic.parameters(), lr=self.adaptation_module_learning_rate
+        )
+        self.num_adaptation_module_substeps = 1
 
     def init_storage(
         self,
@@ -138,6 +148,7 @@ class AMPPPO:
             action_shape,
             self.device,
             num_rma_obs=self.num_rma_obs,
+            num_history_obs=self.num_history_obs,
         )
 
     def test_mode(self):
@@ -146,7 +157,7 @@ class AMPPPO:
     def train_mode(self):
         self.actor_critic.train()
 
-    def act(self, obs, critic_obs, amp_obs, rma_obs=None):
+    def act(self, obs, critic_obs, amp_obs, rma_obs=None, obs_history=None):
         if self.actor_critic.is_recurrent:
             self.transition.hidden_states = self.actor_critic.get_hidden_states()
         # Compute the actions and values
@@ -168,6 +179,7 @@ class AMPPPO:
         self.transition.critic_observations = critic_obs
         self.amp_transition.observations = amp_obs
         self.transition.rma_observations = rma_obs
+        self.transition.observation_histories = obs_history
         return self.transition.actions
 
     def process_env_step(self, rewards, dones, infos, amp_obs):
@@ -221,6 +233,8 @@ class AMPPPO:
         mean_grad_pen_loss = 0
         mean_policy_pred = 0
         mean_expert_pred = 0
+        mean_adaptation_module_loss = 0
+
         if self.actor_critic.is_recurrent:
             generator = self.storage.reccurent_mini_batch_generator(
                 self.num_mini_batches, self.num_learning_epochs
@@ -256,6 +270,7 @@ class AMPPPO:
                 old_mu_batch,
                 old_sigma_batch,
                 rma_obs_batch,
+                obs_history_batch,
                 hid_states_batch,
                 masks_batch,
             ) = sample
@@ -403,6 +418,18 @@ class AMPPPO:
             mean_policy_pred += policy_d.mean().item()
             mean_expert_pred += expert_d.mean().item()
 
+            for _ in range(self.num_adaptation_module_substeps):
+                adaptation_pred = self.actor_critic.adaptation_module(obs_history_batch)
+                with torch.no_grad():
+                    adaptation_target = self.actor_critic.rma_encoder(rma_obs_batch)
+                adaptation_loss = F.mse_loss(adaptation_pred, adaptation_target)
+
+                self.adaptation_module_optimizer.zero_grad()
+                adaptation_loss.backward()
+                self.adaptation_module_optimizer.step()
+
+                mean_adaptation_module_loss += adaptation_loss.item()
+
         num_updates = self.num_learning_epochs * self.num_mini_batches
         mean_value_loss /= num_updates
         mean_surrogate_loss /= num_updates
@@ -410,6 +437,7 @@ class AMPPPO:
         mean_grad_pen_loss /= num_updates
         mean_policy_pred /= num_updates
         mean_expert_pred /= num_updates
+        mean_adaptation_module_loss /= num_updates * self.num_adaptation_module_substeps
         self.storage.clear()
 
         return (
@@ -419,4 +447,5 @@ class AMPPPO:
             mean_grad_pen_loss,
             mean_policy_pred,
             mean_expert_pred,
+            mean_adaptation_module_loss,
         )

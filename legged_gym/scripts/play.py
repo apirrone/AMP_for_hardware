@@ -52,8 +52,8 @@ def play(args):
     env_cfg.terrain.curriculum = False
     env_cfg.noise.add_noise = True
     env_cfg.domain_rand.randomize_friction = True
-    env_cfg.domain_rand.push_robots = True
-    env_cfg.domain_rand.randomize_gains = True
+    env_cfg.domain_rand.push_robots = False
+    env_cfg.domain_rand.randomize_gains = False
     env_cfg.domain_rand.randomize_base_mass = True  # TODO
     env_cfg.domain_rand.randomize_torques = True  # TODO
     env_cfg.domain_rand.randomize_com = True  # TODO
@@ -100,7 +100,11 @@ def play(args):
     img_idx = 0
 
     for i in range(10 * int(env.max_episode_length)):
-        actions = policy(obs.detach())
+        latent = torch.zeros((env.num_envs, 4)).to(device=env.device)
+        policy_input = torch.cat((obs, latent), dim=-1)
+
+        actions = policy(policy_input.detach())
+
         obs, _, rews, dones, infos, _, _ = env.step(actions.detach())
         if RECORD_FRAMES:
             if i % 2:

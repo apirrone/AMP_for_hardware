@@ -203,11 +203,11 @@ class LeggedRobot(BaseTask):
         if self.cfg.env.include_history_steps is not None:
             self.obs_buf_history.reset(reset_env_ids, self.obs_buf[reset_env_ids])
             self.obs_buf_history.insert(self.obs_buf)
-            policy_obs = self.obs_buf_history.get_obs_vec(
-                np.arange(self.include_history_steps)
-            )
-        else:
-            policy_obs = self.obs_buf
+            # policy_obs = self.obs_buf_history.get_obs_vec(
+            #     np.arange(self.include_history_steps)
+            # )
+        # else:
+        policy_obs = self.obs_buf
         if self.privileged_obs_buf is not None:
             self.privileged_obs_buf = torch.clip(
                 self.privileged_obs_buf, -clip_obs, clip_obs
@@ -234,14 +234,18 @@ class LeggedRobot(BaseTask):
         )
 
     def get_observations(self):
-        if self.cfg.env.include_history_steps is not None:
-            policy_obs = self.obs_buf_history.get_obs_vec(
-                np.arange(self.include_history_steps)
-            )
-        else:
-            policy_obs = self.obs_buf
+        # if self.cfg.env.include_history_steps is not None:
+        #     policy_obs = self.obs_buf_history.get_obs_vec(
+        #         np.arange(self.include_history_steps)
+        #     )
+        # else:
+        #     policy_obs = self.obs_buf
 
-        return policy_obs
+        # return policy_obs
+        return self.obs_buf
+
+    def get_observations_history(self):
+        return self.obs_buf_history.obs_buf
 
     def post_physics_step(self):
         """check terminations, compute observations and rewards
