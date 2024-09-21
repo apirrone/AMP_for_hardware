@@ -255,7 +255,7 @@ def export_policy_as_jit(actor_critic, path):
 
         nb_obs = 51
         nb_history_steps = 15
-        nb_latent = 4
+        nb_latent = 18
 
         dummy_input_model = torch.zeros((nb_obs + nb_latent), device="cpu")
         dummy_input_model_adaptation = torch.zeros(
