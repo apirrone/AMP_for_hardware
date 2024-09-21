@@ -165,9 +165,6 @@ class ActorCritic(nn.Module):
     def update_distribution(self, observations, rma_obs=None):
         if rma_obs is not None:
             latent = self.rma_encoder(rma_obs)
-            print(observations.shape)
-            print(latent.shape)
-            print("=")
             mean = self.actor(torch.cat((observations, latent), dim=1))
         else:
             mean = self.actor(observations)
