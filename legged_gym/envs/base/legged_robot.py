@@ -1597,6 +1597,34 @@ class LeggedRobot(BaseTask):
                 dim=1,
             )
 
+        if self.cfg.domain_rand.randomize_gains:
+            stiffness_factor_scale, stiffness_factor_shift = get_scale_shift(
+                self.cfg.domain_rand.stiffness_multiplier_range
+            )
+            damping_factor_scale, damping_factor_shift = get_scale_shift(
+                self.cfg.domain_rand.damping_multiplier_range
+            )
+            priv_dynamics_obs = torch.cat(
+                (
+                    priv_dynamics_obs,
+                    (
+                        (self.randomized_p_gains - stiffness_factor_shift)
+                        * stiffness_factor_scale
+                    ).to(self.device),
+                ),
+                dim=1,
+            )
+            priv_dynamics_obs = torch.cat(
+                (
+                    priv_dynamics_obs,
+                    (
+                        (self.randomized_d_gains - damping_factor_shift)
+                        * damping_factor_scale
+                    ).to(self.device),
+                ),
+                dim=1,
+            )
+
         if priv_dynamics_obs.shape[-1] == 0:
             return None
 
