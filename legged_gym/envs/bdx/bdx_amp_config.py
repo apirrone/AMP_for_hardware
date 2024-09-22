@@ -220,7 +220,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         stiffness_multiplier_range = [0.95, 1.05]
         damping_multiplier_range = [0.95, 1.05]
         randomize_torques = True
-        torque_multiplier_range = [0.7, 1.2]
+        torque_multiplier_range = [0.8, 1.2]
         randomize_com = True
         com_range = [-0.1, 0.1]
 
