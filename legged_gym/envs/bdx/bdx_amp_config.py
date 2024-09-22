@@ -220,7 +220,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         stiffness_multiplier_range = [0.95, 1.05]
         damping_multiplier_range = [0.95, 1.05]
         randomize_torques = True
-        torque_multiplier_range = [0.8, 1.2]
+        torque_multiplier_range = [0.9, 1.1]
         randomize_com = True
         com_range = [-0.1, 0.1]
 
@@ -316,7 +316,7 @@ class BDXAMPCfgPPO(LeggedRobotCfgPPO):
         amp_task_reward_lerp = 0.2  # 0.3
         amp_discr_hidden_dims = [1024, 512]
 
-        disc_grad_penalty = 0.1  # original 10 # TUNE ?
+        disc_grad_penalty = 0.01  # original 10 # TUNE ?
 
         # min_normalized_std = [0.05, 0.02, 0.05] * 4
 
