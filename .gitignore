@@ -63,3 +63,4 @@ __pycache__
 
 *.pkl
 *.onnx
+*.bak
