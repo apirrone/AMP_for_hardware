@@ -116,8 +116,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         effort = 0.93  # Nm
         # effort = 0.52  # Nm
 
-        stiffness_all = 3  # 10 [N*m/rad]
-        damping_all = 0.1  # 0.03
+        stiffness_all = 2.73  # 3 [N*m/rad]
+        damping_all = 0.0  # 0.1
         stiffness = {
             "left_hip_yaw": stiffness_all,
             "left_hip_roll": stiffness_all,
@@ -195,9 +195,9 @@ class BDXAMPCfg(LeggedRobotCfg):
         disable_gravity = False
         fix_base_link = False  # fix the base of the robot
 
-        angular_damping = 0.01
+        angular_damping = 0.1  # 0.01
         armature = 0.001
-        friction = 0.01
+        friction = 0.02  # 0.01
         thickness = 0.001
 
     # class normalization(LeggedRobotCfg.normalization):
