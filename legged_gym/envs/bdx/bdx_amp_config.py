@@ -117,7 +117,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         # effort = 0.52  # Nm
 
         stiffness_all = 2.73  # 3 [N*m/rad]
-        damping_all = 0.0  # 0.1
+        damping_all = 0.1  # 0.1
         stiffness = {
             "left_hip_yaw": stiffness_all,
             "left_hip_roll": stiffness_all,
@@ -155,9 +155,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         }
 
         # action scale: target angle = actionScale * action + defaultAngle
-        action_scale = 0.25  # 0.25
-        # action_scale = 0.5  # 0.25
-        # action_scale = 1.0  # 0.25
+        # action_scale = 0.25  # 0.25
+        action_scale = 1.0  # 0.25
 
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 4  # 30hz control
@@ -195,9 +194,9 @@ class BDXAMPCfg(LeggedRobotCfg):
         disable_gravity = False
         fix_base_link = False  # fix the base of the robot
 
-        angular_damping = 0.1  # 0.01
+        angular_damping = 0.01  # 0.01
         armature = 0.001
-        friction = 0.02  # 0.01
+        friction = 0.03  # 0.01
         thickness = 0.001
 
     # class normalization(LeggedRobotCfg.normalization):
@@ -270,7 +269,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         heading_command = False  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [0.15, 0.14]  # min max [m/s]
+            lin_vel_x = [0.14, 0.14]  # min max [m/s]
             lin_vel_y = [0.0, 0.0]  # min max [m/s]
             ang_vel_yaw = [0.0, 0.0]  # min max [rad/s]
             heading = [0, 0]
