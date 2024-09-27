@@ -63,8 +63,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         debug_save_obs = False
         no_feet = NO_FEET
 
-        num_rma_obs = 0
-        # num_rma_obs = 20
+        # num_rma_obs = 0
+        num_rma_obs = 20
 
         # TODO repair things when no rma obs and no history steps
         include_history_steps = None if num_rma_obs == 0 else 15

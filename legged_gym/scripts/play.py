@@ -60,6 +60,8 @@ def play(args):
     # env_cfg.commands.ranges.lin_vel_x = [-0.12, 0.12]
     # env_cfg.commands.ranges.ang_vel_yaw = [-0.4, 0.4]
 
+    uses_rma = env_cfg.env.num_rma_obs != 0
+
     env_cfg.env.debug_save_obs = True
 
     train_cfg.runner.amp_num_preload_transitions = 1
@@ -75,6 +77,7 @@ def play(args):
         env=env, name=args.task, args=args, train_cfg=train_cfg
     )
     policy = ppo_runner.get_inference_policy(device=env.device)
+
     adaptation_module = ppo_runner.get_adaptation_module_policy(device=env.device)
 
     # export policy as a jit module (used to run it from C++)
@@ -86,7 +89,7 @@ def play(args):
             "exported",
             "policies",
         )
-        export_policy_as_jit(ppo_runner.alg.actor_critic, path)
+        export_policy_as_jit(ppo_runner.alg.actor_critic, path, rma=uses_rma)
         print("Exported policy as jit script to: ", path)
 
     logger = Logger(env.dt)
@@ -103,8 +106,11 @@ def play(args):
 
     for i in range(10 * int(env.max_episode_length)):
         # latent = torch.zeros((env.num_envs, 4)).to(device=env.device)
-        latent = adaptation_module(obs_buf_history.detach())
-        policy_input = torch.cat((obs, latent), dim=-1)
+        if uses_rma:
+            latent = adaptation_module(obs_buf_history.detach())
+            policy_input = torch.cat((obs, latent), dim=-1)
+        else:
+            policy_input = obs
 
         actions = policy(policy_input.detach())
 

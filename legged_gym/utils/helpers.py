@@ -238,7 +238,7 @@ def get_args():
     return args
 
 
-def export_policy_as_jit(actor_critic, path):
+def export_policy_as_jit(actor_critic, path, rma=False):
     if hasattr(actor_critic, "memory_a"):
         # assumes LSTM: TODO add GRU
         exporter = PolicyExporterLSTM(actor_critic)
@@ -250,17 +250,21 @@ def export_policy_as_jit(actor_critic, path):
         traced_script_module = torch.jit.script(model)
         # traced_script_module.save(path)
 
-        adaptation_module = copy.deepcopy(actor_critic.adaptation_module).to("cpu")
-        traced_script_module_adaptation = torch.jit.script(adaptation_module)
+        if rma:
+            adaptation_module = copy.deepcopy(actor_critic.adaptation_module).to("cpu")
+            traced_script_module_adaptation = torch.jit.script(adaptation_module)
 
         nb_obs = 51
         nb_history_steps = 15
         nb_latent = 18
 
-        dummy_input_model = torch.zeros((nb_obs + nb_latent), device="cpu")
-        dummy_input_model_adaptation = torch.zeros(
-            (nb_obs * nb_history_steps), device="cpu"
-        )
+        if rma:
+            dummy_input_model = torch.zeros((nb_obs + nb_latent), device="cpu")
+            dummy_input_model_adaptation = torch.zeros(
+                (nb_obs * nb_history_steps), device="cpu"
+            )
+        else:
+            dummy_input_model = torch.zeros((nb_obs), device="cpu")
 
         torch.onnx.export(
             traced_script_module,
@@ -271,14 +275,15 @@ def export_policy_as_jit(actor_critic, path):
             output_names=["actions"],
         )
 
-        torch.onnx.export(
-            traced_script_module_adaptation,
-            dummy_input_model_adaptation,
-            "ADAPTATION.onnx",
-            verbose=True,
-            input_names=["obs_history"],
-            output_names=["latent"],
-        )
+        if rma:
+            torch.onnx.export(
+                traced_script_module_adaptation,
+                dummy_input_model_adaptation,
+                "ADAPTATION.onnx",
+                verbose=True,
+                input_names=["obs_history"],
+                output_names=["latent"],
+            )
 
 
 class PolicyExporterLSTM(torch.nn.Module):
