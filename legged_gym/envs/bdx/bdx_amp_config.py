@@ -140,7 +140,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         decimation = 4  # 30hz control
 
         action_filter = True
-        cutoff_frequency = 5
+        cutoff_frequency = 10
 
     class terrain(LeggedRobotCfg.terrain):
         mesh_type = "plane"  # "heightfield" # none, plane, heightfield or trimesh
