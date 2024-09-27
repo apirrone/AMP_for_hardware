@@ -183,7 +183,7 @@ class BDXAMPCfg(LeggedRobotCfg):
 
     class domain_rand:
         randomize_friction = True
-        friction_range = [0.9, 1.1]
+        friction_range = [0.95, 1.15]
         randomize_base_mass = True
         added_mass_range = [-0.05, 0.05]
         push_robots = False
@@ -195,18 +195,18 @@ class BDXAMPCfg(LeggedRobotCfg):
         randomize_torques = True
         torque_multiplier_range = [0.9, 1.1]
         randomize_com = True
-        com_range = [-0.01, 0.01]
+        com_range = [-0.05, 0.05]
 
     class noise:
         add_noise = True
         noise_level = 1.0  # scales other values
 
         class noise_scales:
-            dof_pos = 0.01
-            dof_vel = 0.01  # 1.5
-            lin_vel = 0.01
-            ang_vel = 0.01
-            gravity = 0.01
+            dof_pos = 0.05
+            dof_vel = 0.05  # 1.5
+            lin_vel = 0.05
+            ang_vel = 0.05
+            gravity = 0.05
             height_measurements = 0.1
 
     class rewards(LeggedRobotCfg.rewards):
@@ -242,7 +242,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         heading_command = False  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [0.14, 0.14]  # min max [m/s]
+            lin_vel_x = [0.0, 0.14]  # min max [m/s]
             lin_vel_y = [0.0, 0.0]  # min max [m/s]
             ang_vel_yaw = [0.0, 0.0]  # min max [rad/s]
             heading = [0, 0]
