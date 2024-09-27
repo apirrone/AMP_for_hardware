@@ -35,12 +35,6 @@ from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobot
 # MOTION_FILES = glob.glob("datasets/bdx/new_placo_moves/*")
 MOTION_FILES = [
     "datasets/bdx/placo_moves_lower_freq/bdx_walk_forward.txt",
-    # "datasets/bdx/placo_moves_lower_freq/bdx_turn_left.txt",
-    # "datasets/bdx/placo_moves_lower_freq/bdx_turn_right.txt",
-    # "datasets/bdx/new_new_placo_moves/bdx_walk_forward.txt",  # OK
-    # "datasets/bdx/new_new_placo_moves/bdx_turn_left.txt",
-    # "datasets/bdx/new_new_placo_moves/bdx_turn_right.txt",
-    # "datasets/bdx/new_placo_moves/bdx_walk_forward.txt", # OK
 ]
 
 NO_FEET = False  # Do not use feet in the amp observations and data
@@ -63,10 +57,11 @@ class BDXAMPCfg(LeggedRobotCfg):
         debug_save_obs = False
         no_feet = NO_FEET
 
+        # RMA
+        # If num_rma_obs = 0, RMA is not used
         # num_rma_obs = 0
         num_rma_obs = 20
 
-        # TODO repair things when no rma obs and no history steps
         include_history_steps = None if num_rma_obs == 0 else 15
 
     class init_state(LeggedRobotCfg.init_state):
@@ -287,5 +282,3 @@ class BDXAMPCfgPPO(LeggedRobotCfgPPO):
         disc_grad_penalty = 0.01  # original 10 # TUNE ?
 
         min_normalized_std = [0.02] * 15
-
-        pass

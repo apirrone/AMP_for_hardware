@@ -168,11 +168,6 @@ class LeggedRobot(BaseTask):
 
         # actions[:, :] = target_pos
 
-        # a = 0.5
-        # f = 1
-        # targ = a * torch.sin(2 * np.pi * f * self.envs_times[0])
-        # actions[0, :] = targ.to(self.device)
-
         clip_actions = self.cfg.normalization.clip_actions
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
         # step physics and render each frame
@@ -193,20 +188,13 @@ class LeggedRobot(BaseTask):
             self.gym.refresh_dof_state_tensor(self.sim)
         reset_env_ids, terminal_amp_states = self.post_physics_step()
 
-        # # randomize com
-        # if self.cfg.domain_rand.randomize_com:
-        #     self.root_states[:, :2] += self.randomize_com_values
-
         # return clipped obs, clipped states (None), rewards, dones and infos
         clip_obs = self.cfg.normalization.clip_observations
         self.obs_buf = torch.clip(self.obs_buf, -clip_obs, clip_obs)
         if self.cfg.env.include_history_steps is not None:
             self.obs_buf_history.reset(reset_env_ids, self.obs_buf[reset_env_ids])
             self.obs_buf_history.insert(self.obs_buf)
-            # policy_obs = self.obs_buf_history.get_obs_vec(
-            #     np.arange(self.include_history_steps)
-            # )
-        # else:
+
         policy_obs = self.obs_buf
         if self.privileged_obs_buf is not None:
             self.privileged_obs_buf = torch.clip(
@@ -234,14 +222,6 @@ class LeggedRobot(BaseTask):
         )
 
     def get_observations(self):
-        # if self.cfg.env.include_history_steps is not None:
-        #     policy_obs = self.obs_buf_history.get_obs_vec(
-        #         np.arange(self.include_history_steps)
-        #     )
-        # else:
-        #     policy_obs = self.obs_buf
-
-        # return policy_obs
         return self.obs_buf
 
     def get_observations_history(self):
@@ -471,10 +451,6 @@ class LeggedRobot(BaseTask):
             print(self.commands[0])
             pygame.event.pump()  # process event queue
 
-        # base_quat = self.root_states[:, 3:7]
-        # base_lin_vel = quat_rotate_inverse(base_quat, self.root_states[:, 7:10])
-        # base_ang_vel = quat_rotate_inverse(base_quat, self.root_states[:, 10:13])
-
         self.privileged_obs_buf = torch.cat(
             (
                 self.base_lin_vel * self.obs_scales.lin_vel,
@@ -541,10 +517,6 @@ class LeggedRobot(BaseTask):
             foot_pos = torch.zeros((self.num_envs, 6)).to(self.device)
 
         z_pos = self.root_states[:, 2:3]
-
-        # base_quat = self.root_states[:, 3:7]
-        # base_lin_vel = quat_rotate_inverse(base_quat, self.root_states[:, 7:10])
-        # base_ang_vel = quat_rotate_inverse(base_quat, self.root_states[:, 10:13])
 
         return torch.cat(
             (
@@ -1776,6 +1748,7 @@ class LeggedRobot(BaseTask):
         return torch.sum(torch.square(self.dof_pos - self.default_dof_pos), dim=1)
 
     def _reward_motion_imitation(self):
+        # Not used
         target_pos = self.amp_loader.get_joint_pose_batch(
             self.amp_loader.get_full_frame_at_time_batch(
                 np.zeros(self.num_envs, dtype=np.int),
