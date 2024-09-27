@@ -30,6 +30,7 @@
 
 import os
 import pickle
+from re import L
 from time import time
 from typing import Dict, Tuple
 from warnings import WarningMessage
@@ -44,7 +45,7 @@ from torch import Tensor
 import legged_gym.utils.kinematics.urdf as pk
 from legged_gym import LEGGED_GYM_ROOT_DIR, envs
 from legged_gym.envs.base.base_task import BaseTask
-from legged_gym.utils.helpers import class_to_dict
+from legged_gym.utils.helpers import class_to_dict, LowPassActionFilter
 from legged_gym.utils.math import (
     quat_apply_yaw,
     torch_rand_sqrt_float,
@@ -125,6 +126,15 @@ class LeggedRobot(BaseTask):
             self.saved_obs = []
 
         self.num_rma_obs = self.cfg.env.num_rma_obs
+        if self.cfg.control.action_filter:
+            control_freq = int((1 / self.cfg.sim.dt) / self.cfg.control.decimation)
+            self.action_filter = LowPassActionFilter(
+                control_freq,
+                self.cfg.control.cutoff_frequency,
+                self.num_envs,
+                self.num_actions,
+                self.device,
+            )
 
     def reset(self):
         """Reset all robots"""
@@ -167,6 +177,10 @@ class LeggedRobot(BaseTask):
         # target_pos[:] -= self.default_dof_pos
 
         # actions[:, :] = target_pos
+
+        if self.cfg.control.action_filter:
+            self.action_filter.push(actions)
+            actions = self.action_filter.get_filtered_action()
 
         clip_actions = self.cfg.normalization.clip_actions
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
