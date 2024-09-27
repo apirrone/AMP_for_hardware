@@ -63,8 +63,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         debug_save_obs = False
         no_feet = NO_FEET
 
-        # num_rma_obs = 0
-        num_rma_obs = 20
+        num_rma_obs = 0
+        # num_rma_obs = 20
 
         # TODO repair things when no rma obs and no history steps
         include_history_steps = None if num_rma_obs == 0 else 15
@@ -74,23 +74,6 @@ class BDXAMPCfg(LeggedRobotCfg):
         # pos = [0.0, 0.0, 0.3]  # x,y,z [m]
         rot = [0, -0.08, 0, 1]
 
-        # default_joint_angles = {
-        #     "left_hip_yaw": -0.0038368461980583203,
-        #     "left_hip_roll": 0.014431210831554308,
-        #     "left_hip_pitch": 1.133082668956462,
-        #     "left_knee": -1.4620636255950707,
-        #     "left_ankle": 0.590808248377727,
-        #     "neck_pitch": -0.17453292519943295,
-        #     "head_pitch": -0.17453292519943295,
-        #     "head_yaw": 0,
-        #     "left_antenna": 0,
-        #     "right_antenna": 0,
-        #     "right_hip_yaw": 0.0019449075083605783,
-        #     "right_hip_roll": 0.007371299077063522,
-        #     "right_hip_pitch": 1.1351700102241071,
-        #     "right_knee": -1.4585281663702696,
-        #     "right_ankle": 0.5851648236531114,
-        # }
         default_joint_angles = {
             "left_hip_yaw": -0.002853397830292128,
             "left_hip_roll": 0.01626303761810685,
@@ -199,19 +182,15 @@ class BDXAMPCfg(LeggedRobotCfg):
         friction = 0.03  # 0.01
         thickness = 0.001
 
-    # class normalization(LeggedRobotCfg.normalization):
-    #     clip_observations = 5.0
-    #     clip_actions = 1.0
-
     class sim(LeggedRobotCfg.sim):
         dt = 0.0083333  # 120hz
         substeps = 1
 
     class domain_rand:
         randomize_friction = True
-        friction_range = [0.8, 1.2]
+        friction_range = [0.9, 1.1]
         randomize_base_mass = True
-        added_mass_range = [-0.1, 0.1]
+        added_mass_range = [-0.05, 0.05]
         push_robots = False
         push_interval_s = 4
         max_push_vel_xy = 0.5  # 0.3
@@ -219,20 +198,20 @@ class BDXAMPCfg(LeggedRobotCfg):
         stiffness_multiplier_range = [0.99, 1.01]
         damping_multiplier_range = [0.99, 1.01]
         randomize_torques = True
-        torque_multiplier_range = [0.8, 1.2]
+        torque_multiplier_range = [0.9, 1.1]
         randomize_com = True
-        com_range = [-0.05, 0.05]
+        com_range = [-0.01, 0.01]
 
     class noise:
         add_noise = True
         noise_level = 1.0  # scales other values
 
         class noise_scales:
-            dof_pos = 0.05
-            dof_vel = 0.05  # 1.5
-            lin_vel = 0.05
-            ang_vel = 0.05
-            gravity = 0.05
+            dof_pos = 0.01
+            dof_vel = 0.01  # 1.5
+            lin_vel = 0.01
+            ang_vel = 0.01
+            gravity = 0.01
             height_measurements = 0.1
 
     class rewards(LeggedRobotCfg.rewards):
@@ -259,7 +238,6 @@ class BDXAMPCfg(LeggedRobotCfg):
             action_rate = -1.0
             stand_still = 0.0
             dof_pos_limits = 0.0
-            # motion_imitation = 5.0
 
     class commands:
         curriculum = False  # False
@@ -269,14 +247,10 @@ class BDXAMPCfg(LeggedRobotCfg):
         heading_command = False  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [0.0, 0.14]  # min max [m/s]
-            lin_vel_y = [-0.1, 0.1]  # min max [m/s]
-            ang_vel_yaw = [-0.4, 0.4]  # min max [rad/s]
+            lin_vel_x = [0.14, 0.14]  # min max [m/s]
+            lin_vel_y = [0.0, 0.0]  # min max [m/s]
+            ang_vel_yaw = [0.0, 0.0]  # min max [rad/s]
             heading = [0, 0]
-            # lin_vel_x = [0.1, 0.2]  # min max [m/s]
-            # lin_vel_y = [0.0, 0.0]  # min max [m/s]
-            # ang_vel_yaw = [0.0, 0.0]  # min max [rad/s]
-            # heading = [-3.14, 3.14]
 
     class viewer(LeggedRobotCfg.viewer):
         ref_env = 0
@@ -287,13 +261,8 @@ class BDXAMPCfg(LeggedRobotCfg):
 class BDXAMPCfgPPO(LeggedRobotCfgPPO):
     runner_class_name = "AMPOnPolicyRunner"
 
-    # class policy(LeggedRobotCfgPPO.policy):
-    #     actor_hidden_dims = [1024, 512]  # [512, 256, 128]
-    #     critic_hidden_dims = [1024, 512]  # [512, 256, 128]
-    #     activation = "relu"  # can be elu, relu, selu, crelu, lrelu, tanh, sigmoid
-
     class algorithm(LeggedRobotCfgPPO.algorithm):
-        entropy_coef = 0.01  # 0.01
+        entropy_coef = 0.01
         amp_replay_buffer_size = 1000000
         num_learning_epochs = 5
         num_mini_batches = 4
@@ -317,8 +286,6 @@ class BDXAMPCfgPPO(LeggedRobotCfgPPO):
 
         disc_grad_penalty = 0.01  # original 10 # TUNE ?
 
-        # min_normalized_std = [0.05, 0.02, 0.05] * 4
-
-        min_normalized_std = [0.02] * 15  # WARNING TOTALLY PIFFED
+        min_normalized_std = [0.02] * 15
 
         pass

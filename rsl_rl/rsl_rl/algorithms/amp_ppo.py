@@ -418,17 +418,20 @@ class AMPPPO:
             mean_policy_pred += policy_d.mean().item()
             mean_expert_pred += expert_d.mean().item()
 
-            for _ in range(self.num_adaptation_module_substeps):
-                adaptation_pred = self.actor_critic.adaptation_module(obs_history_batch)
-                with torch.no_grad():
-                    adaptation_target = self.actor_critic.rma_encoder(rma_obs_batch)
-                adaptation_loss = F.mse_loss(adaptation_pred, adaptation_target)
+            if self.num_rma_obs != 0:
+                for _ in range(self.num_adaptation_module_substeps):
+                    adaptation_pred = self.actor_critic.adaptation_module(
+                        obs_history_batch
+                    )
+                    with torch.no_grad():
+                        adaptation_target = self.actor_critic.rma_encoder(rma_obs_batch)
+                    adaptation_loss = F.mse_loss(adaptation_pred, adaptation_target)
 
-                self.adaptation_module_optimizer.zero_grad()
-                adaptation_loss.backward()
-                self.adaptation_module_optimizer.step()
+                    self.adaptation_module_optimizer.zero_grad()
+                    adaptation_loss.backward()
+                    self.adaptation_module_optimizer.step()
 
-                mean_adaptation_module_loss += adaptation_loss.item()
+                    mean_adaptation_module_loss += adaptation_loss.item()
 
         num_updates = self.num_learning_epochs * self.num_mini_batches
         mean_value_loss /= num_updates
@@ -437,7 +440,10 @@ class AMPPPO:
         mean_grad_pen_loss /= num_updates
         mean_policy_pred /= num_updates
         mean_expert_pred /= num_updates
-        mean_adaptation_module_loss /= num_updates * self.num_adaptation_module_substeps
+        if self.num_rma_obs != 0:
+            mean_adaptation_module_loss /= (
+                num_updates * self.num_adaptation_module_substeps
+            )
         self.storage.clear()
 
         return (

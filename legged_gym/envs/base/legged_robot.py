@@ -245,7 +245,10 @@ class LeggedRobot(BaseTask):
         return self.obs_buf
 
     def get_observations_history(self):
-        return self.obs_buf_history.obs_buf
+        if self.cfg.env.include_history_steps is not None:
+            return self.obs_buf_history.obs_buf
+        else:
+            return None
 
     def post_physics_step(self):
         """check terminations, compute observations and rewards

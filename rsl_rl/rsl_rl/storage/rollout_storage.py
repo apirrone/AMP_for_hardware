@@ -157,7 +157,9 @@ class RolloutStorage:
         self._save_hidden_states(transition.hidden_states)
         if self.rma_observations is not None:
             self.rma_observations[self.step].copy_(transition.rma_observations)
-        self.observation_histories[self.step].copy_(transition.observation_histories)
+            self.observation_histories[self.step].copy_(
+                transition.observation_histories
+            )
         self.step += 1
 
     def _save_hidden_states(self, hidden_states):

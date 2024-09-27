@@ -67,7 +67,12 @@ class AMPOnPolicyRunner:
             num_critic_obs=num_critic_obs,
             num_actions=self.env.num_actions,
             num_rma_obs=self.env.num_rma_obs,
-            num_history_obs=self.env.num_obs * self.env.include_history_steps,
+            num_history_obs=self.env.num_obs
+            * (
+                self.env.include_history_steps
+                if self.env.include_history_steps is not None
+                else 0
+            ),
             **self.policy_cfg,
         ).to(self.device)
 
@@ -107,7 +112,12 @@ class AMPOnPolicyRunner:
             min_std=min_std,
             disc_grad_penalty=train_cfg["runner"]["disc_grad_penalty"],
             num_rma_obs=self.env.num_rma_obs,
-            num_history_obs=self.env.num_obs * self.env.include_history_steps,
+            num_history_obs=self.env.num_obs
+            * (
+                self.env.include_history_steps
+                if self.env.include_history_steps is not None
+                else 0
+            ),
             **self.alg_cfg,
         )
         self.num_steps_per_env = self.cfg["num_steps_per_env"]
