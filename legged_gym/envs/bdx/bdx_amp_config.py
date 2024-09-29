@@ -227,7 +227,7 @@ class BDXAMPCfg(LeggedRobotCfg):
             # tracking_ang_vel = 0.5
             lin_vel_z = 0.0
             ang_vel_xy = 0.0
-            orientation = 0.0
+            orientation = -1.0
             torques = -0.000025  # -0.000025
             dof_vel = 0.0
             dof_acc = 0.0
