@@ -60,7 +60,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         # RMA
         # If num_rma_obs = 0, RMA is not used
         # num_rma_obs = 0
-        num_rma_obs = 20
+        num_rma_obs = 21
 
         include_history_steps = None if num_rma_obs == 0 else 15
 

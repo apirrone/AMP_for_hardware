@@ -262,10 +262,8 @@ class LeggedRobot(BaseTask):
             indices = (
                 ((self.randomized_observation_lag / 1000) / self.dt).long().squeeze()
             )
-            # print("indices", indices)
             lagged_obs = self.obs_lag_buffer.get_lagged_obs(indices)
-            # print("lagged_obs.shape", lagged_obs.shape)
-            return lagged_obs
+            return lagged_obs  # [8, 51]
 
     def get_observations_history(self):
         if self.cfg.env.include_history_steps is not None:
@@ -1654,6 +1652,20 @@ class LeggedRobot(BaseTask):
                         (self.randomized_d_gains - damping_factor_shift)
                         * damping_factor_scale
                     ).to(self.device),
+                ),
+                dim=1,
+            )
+
+        if self.cfg.domain_rand.observation_lag:
+            lag_scale, lag_shift = get_scale_shift(
+                self.cfg.domain_rand.observation_lag_range
+            )
+            priv_dynamics_obs = torch.cat(
+                (
+                    priv_dynamics_obs,
+                    ((self.randomized_observation_lag - lag_shift) * lag_scale).to(
+                        self.device
+                    ),
                 ),
                 dim=1,
             )
