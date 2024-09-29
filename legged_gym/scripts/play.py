@@ -57,7 +57,7 @@ def play(args):
     env_cfg.domain_rand.randomize_base_mass = False  # TODO
     env_cfg.domain_rand.randomize_torques = False  # TODO
     env_cfg.domain_rand.randomize_com = False  # TODO
-    # env_cfg.commands.ranges.lin_vel_x = [-0.12, 0.12]
+    # env_cfg.commands.ranges.lin_vel_x = [0.0, 0.2]
     # env_cfg.commands.ranges.ang_vel_yaw = [-0.4, 0.4]
 
     uses_rma = env_cfg.env.num_rma_obs != 0
