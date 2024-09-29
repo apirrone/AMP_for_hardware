@@ -52,7 +52,7 @@ def play(args):
     env_cfg.terrain.curriculum = False
     env_cfg.noise.add_noise = True
     env_cfg.domain_rand.randomize_friction = True
-    env_cfg.domain_rand.push_robots = True
+    env_cfg.domain_rand.push_robots = False
     env_cfg.domain_rand.randomize_gains = True
     env_cfg.domain_rand.randomize_base_mass = True  # TODO
     env_cfg.domain_rand.randomize_torques = True  # TODO
