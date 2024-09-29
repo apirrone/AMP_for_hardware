@@ -189,7 +189,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         friction_range = [0.7, 1.6]
         randomize_base_mass = True
         added_mass_range = [-0.15, 0.15]
-        push_robots = False
+        push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.5  # 0.3
         randomize_gains = False
@@ -281,7 +281,7 @@ class BDXAMPCfgPPO(LeggedRobotCfgPPO):
         amp_reward_coef = 2.0  # 2.0
         amp_motion_files = MOTION_FILES
         amp_num_preload_transitions = 2000000
-        amp_task_reward_lerp = 0.2  # 0.3
+        amp_task_reward_lerp = 0.5  # 0.3
         amp_discr_hidden_dims = [1024, 512]
 
         disc_grad_penalty = 0.01  # original 10 # TUNE ?
