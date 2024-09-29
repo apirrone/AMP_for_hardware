@@ -3,7 +3,6 @@ import torch
 
 class ObservationBuffer:
     def __init__(self, num_envs, num_obs, include_history_steps, device):
-
         self.num_envs = num_envs
         self.num_obs = num_obs
         self.include_history_steps = include_history_steps
@@ -20,9 +19,9 @@ class ObservationBuffer:
 
     def insert(self, new_obs):
         # Shift observations back.
-        self.obs_buf[:, : self.num_obs * (self.include_history_steps - 1)] = (
-            self.obs_buf[:, self.num_obs : self.num_obs * self.include_history_steps]
-        )
+        self.obs_buf[
+            :, : self.num_obs * (self.include_history_steps - 1)
+        ] = self.obs_buf[:, self.num_obs : self.num_obs * self.include_history_steps]
 
         # Add new observation.
         self.obs_buf[:, -self.num_obs :] = new_obs
@@ -46,3 +45,11 @@ class ObservationBuffer:
             )
 
         return torch.cat(obs, dim=-1)
+
+    def get_lagged_obs(self, indices):
+        obs = []
+        for i, env_id in enumerate(self.obs_buf):
+            idx = indices[i]
+            obs.append(self.obs_buf[i, idx * self.num_obs : (idx + 1) * self.num_obs])
+
+        return torch.stack(obs, dim=0)

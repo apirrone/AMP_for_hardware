@@ -199,6 +199,9 @@ class BDXAMPCfg(LeggedRobotCfg):
         torque_multiplier_range = [0.8, 1.2]
         randomize_com = True
         com_range = [-0.2, 0.2]
+        # TODO include in RMA
+        observation_lag = True
+        observation_lag_range = [0, 200]  # ms
 
     class noise:
         add_noise = True

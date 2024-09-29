@@ -56,6 +56,7 @@ from legged_gym.utils.terrain import Terrain
 from rsl_rl.datasets.motion_loader import AMPLoader
 
 from .legged_robot_config import LeggedRobotCfg
+from legged_gym.envs.base import observation_buffer
 
 
 class LeggedRobot(BaseTask):
@@ -136,6 +137,14 @@ class LeggedRobot(BaseTask):
                 self.device,
             )
 
+        if self.cfg.domain_rand.observation_lag:
+            max_latency = self.cfg.domain_rand.observation_lag_range[1]  # ms
+            max_latency /= 1000  # s
+            max_num_history = int(max_latency / self.dt)
+            self.obs_lag_buffer = observation_buffer.ObservationBuffer(
+                self.num_envs, self.num_obs, max_num_history, self.device
+            )
+
     def reset(self):
         """Reset all robots"""
         self.reset_idx(torch.arange(self.num_envs, device=self.device))
@@ -144,6 +153,13 @@ class LeggedRobot(BaseTask):
                 torch.arange(self.num_envs, device=self.device),
                 self.obs_buf[torch.arange(self.num_envs, device=self.device)],
             )
+
+        if self.cfg.domain_rand.observation_lag:
+            self.obs_lag_buffer.reset(
+                torch.arange(self.num_envs, device=self.device),
+                self.obs_buf[torch.arange(self.num_envs, device=self.device)],
+            )
+
         obs, privileged_obs, _, _, _, _, _ = self.step(
             torch.zeros(
                 self.num_envs, self.num_actions, device=self.device, requires_grad=False
@@ -209,6 +225,10 @@ class LeggedRobot(BaseTask):
             self.obs_buf_history.reset(reset_env_ids, self.obs_buf[reset_env_ids])
             self.obs_buf_history.insert(self.obs_buf)
 
+        if self.cfg.domain_rand.observation_lag:
+            self.obs_lag_buffer.reset(reset_env_ids, self.obs_buf[reset_env_ids])
+            self.obs_lag_buffer.insert(self.obs_buf)
+
         policy_obs = self.obs_buf
         if self.privileged_obs_buf is not None:
             self.privileged_obs_buf = torch.clip(
@@ -236,7 +256,16 @@ class LeggedRobot(BaseTask):
         )
 
     def get_observations(self):
-        return self.obs_buf
+        if not self.cfg.domain_rand.observation_lag:
+            return self.obs_buf  # [8, 51]
+        else:
+            indices = (
+                ((self.randomized_observation_lag / 1000) / self.dt).long().squeeze()
+            )
+            # print("indices", indices)
+            lagged_obs = self.obs_lag_buffer.get_lagged_obs(indices)
+            # print("lagged_obs.shape", lagged_obs.shape)
+            return lagged_obs
 
     def get_observations_history(self):
         if self.cfg.env.include_history_steps is not None:
@@ -381,6 +410,16 @@ class LeggedRobot(BaseTask):
             self.randomize_com_values[:, :] = (
                 com_range[0] - com_range[1]
             ) * torch.rand(self.num_envs, 3, device=self.device) + com_range[1]
+
+        if self.cfg.domain_rand.observation_lag:
+            self.randomized_observation_lag = (
+                torch.FloatTensor(self.num_envs, 1)
+                .uniform_(
+                    self.cfg.domain_rand.observation_lag_range[0],
+                    self.cfg.domain_rand.observation_lag_range[1],
+                )
+                .to(self.device)
+            )
 
     def compute_reward(self):
         """Compute rewards
@@ -1294,6 +1333,11 @@ class LeggedRobot(BaseTask):
             rigid_shape_props = self._process_rigid_shape_props(
                 rigid_shape_props_asset, i
             )
+
+            self.randomized_observation_lag = torch.zeros(
+                self.num_envs, 1, device=self.device
+            )
+
             self.gym.set_asset_rigid_shape_properties(robot_asset, rigid_shape_props)
             anymal_handle = self.gym.create_actor(
                 env_handle,
