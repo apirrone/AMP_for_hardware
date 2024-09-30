@@ -95,8 +95,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         effort = 0.93  # Nm
         # effort = 0.52  # Nm
 
-        # stiffness_all = 2.54  # 3 [N*m/rad]
-        stiffness_all = 4  # 3 [N*m/rad]
+        stiffness_all = 2.54  # 3 [N*m/rad]
+        # stiffness_all = 4  # 3 [N*m/rad]
         # damping_all = 0.095  # 0.1
         damping_all = 0  # 0.1
         stiffness = {
@@ -142,7 +142,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 4  # 30hz control
 
-        action_filter = False
+        action_filter = True
         cutoff_frequency = 10
 
     class terrain(LeggedRobotCfg.terrain):
