@@ -177,7 +177,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         disable_gravity = False
         fix_base_link = False  # fix the base of the robot
 
-        damping = 0.1
+        damping = 0.095
         angular_damping = 0.0  # 0.01
         armature = 0.0018
         friction = 0.058  # 0.01
@@ -250,7 +250,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         heading_command = False  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [0.14, 0.14]  # min max [m/s] # 0.14 ok
+            lin_vel_x = [0.0, 0.14]  # min max [m/s] # 0.14 ok
             lin_vel_y = [0.0, 0.0]  # min max [m/s] # O.1 ok
             ang_vel_yaw = [0.0, 0.0]  # min max [rad/s] # 0.3 ok
             heading = [0, 0]
