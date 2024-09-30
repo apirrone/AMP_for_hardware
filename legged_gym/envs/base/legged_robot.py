@@ -1827,3 +1827,18 @@ class LeggedRobot(BaseTask):
             )
         )
         return torch.sum(-torch.square(self.dof_pos - target_pos), dim=1)
+
+    # TODO
+    # def _reward_action_smoothness(self):
+    #     """
+    #     https://github.com/HighTorque-Robotics/livelybot_rl_control
+    #     Encourages smoothness in the robot's actions by penalizing large differences between consecutive actions.
+    #     This is important for achieving fluid motion and reducing mechanical stress.
+    #     """
+    #     term_1 = torch.sum(torch.square(self.last_actions - self.actions), dim=1)
+    #     term_2 = torch.sum(
+    #         torch.square(self.actions + self.last_last_actions - 2 * self.last_actions),
+    #         dim=1,
+    #     )
+    #     term_3 = 0.05 * torch.sum(torch.abs(self.actions), dim=1)
+    #     return term_1 + term_2 + term_3
