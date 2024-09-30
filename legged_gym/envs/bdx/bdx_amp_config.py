@@ -142,7 +142,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 4  # 30hz control
 
-        action_filter = True
+        action_filter = False
         cutoff_frequency = 10
 
     class terrain(LeggedRobotCfg.terrain):

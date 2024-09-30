@@ -229,7 +229,8 @@ class LeggedRobot(BaseTask):
             self.obs_lag_buffer.reset(reset_env_ids, self.obs_buf[reset_env_ids])
             self.obs_lag_buffer.insert(self.obs_buf)
 
-        policy_obs = self.obs_buf
+        # policy_obs = self.obs_buf
+        policy_obs = self.get_observations()
         if self.privileged_obs_buf is not None:
             self.privileged_obs_buf = torch.clip(
                 self.privileged_obs_buf, -clip_obs, clip_obs
