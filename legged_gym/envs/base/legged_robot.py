@@ -684,6 +684,7 @@ class LeggedRobot(BaseTask):
                 )
 
                 props["friction"] = self.cfg.asset.friction
+                props["damping"] = self.cfg.asset.damping
                 props["armature"] = self.cfg.asset.armature
         return props
 
