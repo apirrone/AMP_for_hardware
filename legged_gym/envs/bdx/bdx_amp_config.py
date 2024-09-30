@@ -189,19 +189,19 @@ class BDXAMPCfg(LeggedRobotCfg):
 
     class domain_rand:
         randomize_friction = True
-        friction_range = [0.8, 1.5]
+        friction_range = [0.9, 1.1]
         randomize_base_mass = True
-        added_mass_range = [-0.15, 0.15]
-        push_robots = True
+        added_mass_range = [-0.05, 0.05]
+        push_robots = False
         push_interval_s = 4
         max_push_vel_xy = 0.5  # 0.3
         randomize_gains = False
         stiffness_multiplier_range = [0.99, 1.01]
         damping_multiplier_range = [0.99, 1.01]
         randomize_torques = True
-        torque_multiplier_range = [0.85, 1.15]
+        torque_multiplier_range = [0.9, 1.1]
         randomize_com = True
-        com_range = [-0.15, 0.15]
+        com_range = [-0.05, 0.05]
         observation_lag = True
         observation_lag_range = [0, 200]  # ms
 
@@ -250,7 +250,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         heading_command = False  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [0.0, 0.14]  # min max [m/s] # 0.14 ok
+            lin_vel_x = [0.14, 0.14]  # min max [m/s] # 0.14 ok
             lin_vel_y = [0.0, 0.0]  # min max [m/s] # O.1 ok
             ang_vel_yaw = [0.0, 0.0]  # min max [rad/s] # 0.3 ok
             heading = [0, 0]
@@ -284,7 +284,7 @@ class BDXAMPCfgPPO(LeggedRobotCfgPPO):
         amp_reward_coef = 2.0  # 2.0
         amp_motion_files = MOTION_FILES
         amp_num_preload_transitions = 2000000
-        amp_task_reward_lerp = 0.3  # 0.3
+        amp_task_reward_lerp = 0.2  # 0.3
         amp_discr_hidden_dims = [1024, 512]
 
         disc_grad_penalty = 0.01  # original 10 # TUNE ?
