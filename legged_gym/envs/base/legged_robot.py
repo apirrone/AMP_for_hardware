@@ -140,7 +140,7 @@ class LeggedRobot(BaseTask):
         if self.cfg.domain_rand.observation_lag:
             max_latency = self.cfg.domain_rand.observation_lag_range[1]  # ms
             max_latency /= 1000  # s
-            max_num_history = int(max_latency / self.dt)
+            max_num_history = int(max_latency / self.dt) + 1
             self.obs_lag_buffer = observation_buffer.ObservationBuffer(
                 self.num_envs, self.num_obs, max_num_history, self.device
             )
