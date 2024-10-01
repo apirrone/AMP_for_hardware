@@ -260,11 +260,7 @@ class LeggedRobot(BaseTask):
         if not self.cfg.domain_rand.observation_lag:
             return self.obs_buf  # [8, 51]
         else:
-            indices = (
-                ((self.randomized_observation_lag / 1000) / self.dt).long().squeeze()
-            )
-
-            lagged_obs = self.obs_lag_buffer.get_lagged_obs(indices)
+            lagged_obs = self.obs_lag_buffer.get_lagged_obs(self.randomized_indices)
 
             return lagged_obs  # [8, 51]
 
@@ -420,6 +416,10 @@ class LeggedRobot(BaseTask):
                     self.cfg.domain_rand.observation_lag_range[1],
                 )
                 .to(self.device)
+            )
+
+            self.randomized_indices = (
+                ((self.randomized_observation_lag / 1000) / self.dt).long().squeeze()
             )
 
     def compute_reward(self):
@@ -1339,6 +1339,8 @@ class LeggedRobot(BaseTask):
             self.randomized_observation_lag = torch.zeros(
                 self.num_envs, 1, device=self.device
             )
+
+            self.randomized_indices = torch.zeros(self.num_envs, 1, device=self.device)
 
             self.gym.set_asset_rigid_shape_properties(robot_asset, rigid_shape_props)
             anymal_handle = self.gym.create_actor(

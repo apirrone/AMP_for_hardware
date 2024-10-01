@@ -61,7 +61,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         # RMA
         # If num_rma_obs = 0, RMA is not used
         # num_rma_obs = 0
-        num_rma_obs = 20
+        num_rma_obs = 21
 
         include_history_steps = None if num_rma_obs == 0 else 15
 
@@ -205,7 +205,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         com_range = [-0.05, 0.05]
         # TODO debug this
         # This seems to be very slow the way I implemented it
-        observation_lag = False
+        observation_lag = True
         observation_lag_range = [0, 200]  # ms
 
     class noise:
