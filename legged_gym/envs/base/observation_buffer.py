@@ -50,4 +50,8 @@ class ObservationBuffer:
         # indices is shape num_envs, an index corresponds to an index in the history of observations
         # an index of indices is an index into the history of observations
 
-        return self.obs_buf[torch.arange(self.num_envs, device=self.device), indices]
+        lagged_obs = self.obs_buf[
+            torch.arange(self.num_envs),
+            indices * self.num_obs : (indices + 1) * self.num_obs,
+        ]
+        return lagged_obs
