@@ -50,9 +50,5 @@ class ObservationBuffer:
         obs = []
         for i, env_id in enumerate(self.obs_buf):
             idx = indices[i]
-            obs.append(self.obs_buf[i, idx * self.num_obs])
-            if len(self.obs_buf[i, idx * self.num_obs]) != 51:
-                print("AAAAA")
-                print(len(self.obs_buf[i, idx * self.num_obs]))
-        print("===")
+            obs.append(self.obs_buf[i, idx * self.num_obs : (idx + 1) * self.num_obs])
         return torch.stack(obs, dim=0)
