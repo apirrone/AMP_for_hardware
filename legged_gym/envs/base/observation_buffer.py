@@ -49,15 +49,10 @@ class ObservationBuffer:
     def get_lagged_obs(self, indices):
         # indices is shape num_envs, an index corresponds to an index in the history of observations
         # an index of indices is an index into the history of observations
-        lagged_obs = torch.stack(
-            [
-                self.obs_buf[
-                    i, indices[i] * self.num_obs : (indices[i] + 1) * self.num_obs
-                ]
-                for i in range(self.num_envs)
-            ],
-            dim=0,
-        )
-        print(lagged_obs.shape)
-        print("==")
+        indices_expanded = indices.unsqueeze(1).expand(-1, self.num_obs)
+        gather_indices = (
+            indices_expanded * self.num_obs
+            + torch.arange(self.num_obs, device=self.device)
+        ).view(self.num_envs, self.num_obs)
+        lagged_obs = torch.gather(self.obs_buf, 1, gather_indices)
         return lagged_obs
