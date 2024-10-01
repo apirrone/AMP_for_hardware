@@ -53,9 +53,11 @@ class ObservationBuffer:
             [
                 self.obs_buf[
                     i, indices[i] * self.num_obs : (indices[i] + 1) * self.num_obs
-                ].unsqueeze(0)
+                ]
                 for i in range(self.num_envs)
             ],
             dim=0,
         )
+        print(lagged_obs.shape)
+        print("==")
         return lagged_obs
