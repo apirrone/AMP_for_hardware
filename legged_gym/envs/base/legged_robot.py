@@ -140,7 +140,7 @@ class LeggedRobot(BaseTask):
         if self.cfg.domain_rand.observation_lag:
             max_latency = self.cfg.domain_rand.observation_lag_range[1]  # ms
             max_latency /= 1000  # s
-            max_num_history = int(max_latency / self.dt) + 1
+            max_num_history = int(max_latency / self.dt)
             self.obs_lag_buffer = observation_buffer.ObservationBuffer(
                 self.num_envs, self.num_obs, max_num_history, self.device
             )
@@ -265,6 +265,7 @@ class LeggedRobot(BaseTask):
             )
 
             lagged_obs = self.obs_lag_buffer.get_lagged_obs(indices)
+
             return lagged_obs  # [8, 51]
 
     def get_observations_history(self):
