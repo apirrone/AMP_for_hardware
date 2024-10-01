@@ -263,8 +263,7 @@ class LeggedRobot(BaseTask):
             indices = (
                 ((self.randomized_observation_lag / 1000) / self.dt).long().squeeze()
             )
-            print(indices)
-            print(len(indices))
+
             lagged_obs = self.obs_lag_buffer.get_lagged_obs(indices)
             return lagged_obs  # [8, 51]
 

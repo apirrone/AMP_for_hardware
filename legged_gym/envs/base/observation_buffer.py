@@ -52,4 +52,5 @@ class ObservationBuffer:
             idx = indices[i]
             obs.append(self.obs_buf[i, idx * self.num_obs : (idx + 1) * self.num_obs])
 
+        print(obs)
         return torch.stack(obs, dim=0)
