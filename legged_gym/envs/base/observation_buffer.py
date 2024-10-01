@@ -47,8 +47,8 @@ class ObservationBuffer:
         return torch.cat(obs, dim=-1)
 
     def get_lagged_obs(self, indices):
-        obs = []
-        for i, env_id in enumerate(self.obs_buf):
-            idx = indices[i]
-            obs.append(self.obs_buf[i, idx * self.num_obs : (idx + 1) * self.num_obs])
-        return torch.stack(obs, dim=0)
+        indices = indices.unsqueeze(1) * self.num_obs
+        obs = torch.gather(
+            self.obs_buf, 1, indices.unsqueeze(-1).expand(-1, -1, self.num_obs)
+        ).squeeze(1)
+        return obs
