@@ -206,7 +206,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         # TODO debug this
         # This seems to be very slow the way I implemented it
         observation_lag = True
-        observation_lag_range = [0, 200]  # ms
+        observation_lag_range = [0, 100]  # ms
 
     class noise:
         add_noise = True
