@@ -258,7 +258,7 @@ class LeggedRobot(BaseTask):
 
     def get_observations(self):
         if not self.cfg.domain_rand.observation_lag:
-            return self.obs_buf  # [8, 51]
+            return self.obs_buf  # [num_envs, 51]
         else:
             lagged_obs = self.obs_lag_buffer.get_lagged_obs(self.randomized_indices)
 
@@ -267,7 +267,7 @@ class LeggedRobot(BaseTask):
                 :, -self.cfg.env.num_actions :
             ]
 
-            return lagged_obs  # [8, 51]
+            return lagged_obs  # [num_envs, 51]
 
     def get_observations_history(self):
         if self.cfg.env.include_history_steps is not None:
