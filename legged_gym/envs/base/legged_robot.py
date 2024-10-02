@@ -262,6 +262,11 @@ class LeggedRobot(BaseTask):
         else:
             lagged_obs = self.obs_lag_buffer.get_lagged_obs(self.randomized_indices)
 
+            # Only the observations are delayed
+            lagged_obs[:, -self.cfg.env.num_actions :] = self.obs_buf[
+                :, -self.cfg.env.num_actions :
+            ]
+
             return lagged_obs  # [8, 51]
 
     def get_observations_history(self):
