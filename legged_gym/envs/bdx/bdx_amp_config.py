@@ -254,9 +254,9 @@ class BDXAMPCfg(LeggedRobotCfg):
         heading_command = False  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [0.0, 0.14]  # min max [m/s] # 0.14 ok
-            lin_vel_y = [-0.1, 0.1]  # min max [m/s] # O.1 ok
-            ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s] # 0.3 ok
+            lin_vel_x = [0.14, 0.14]  # min max [m/s] # 0.14 ok
+            lin_vel_y = [0.0, 0.0]  # min max [m/s] # O.1 ok
+            ang_vel_yaw = [0.0, 0.0]  # min max [rad/s] # 0.3 ok
             heading = [0, 0]
 
     class viewer(LeggedRobotCfg.viewer):
