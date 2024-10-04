@@ -140,7 +140,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         # action_scale = 1.0  # 0.25
 
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 4  # 30hz control
+        decimation = 2  # 120hz control if dt 240hz, 60hz if dt 120hz
+        # decimation = 4  # 30hz control if dt 120hz, 60hz if dt 240hz
 
         action_filter = False
         cutoff_frequency = 10
@@ -185,7 +186,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         thickness = 0.001
 
     class sim(LeggedRobotCfg.sim):
-        dt = 0.0083333  # 120hz
+        # dt = 0.0083333  # 120hz
+        dt = 0.00416665  # 240hz
         substeps = 1
 
     class domain_rand:
@@ -203,10 +205,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         torque_multiplier_range = [0.9, 1.1]
         randomize_com = True
         com_range = [-0.05, 0.05]
-        # TODO debug this
-        # This seems to be very slow the way I implemented it
         observation_lag = True
-        observation_lag_range = [0, 40]  # ms
+        observation_lag_range = [0, 10]  # ms
 
     class noise:
         add_noise = True
