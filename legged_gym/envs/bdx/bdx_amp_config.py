@@ -61,7 +61,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         # RMA
         # If num_rma_obs = 0, RMA is not used
         # num_rma_obs = 0
-        num_rma_obs = 21
+        num_rma_obs = 20
 
         include_history_steps = None if num_rma_obs == 0 else 15
 
@@ -205,7 +205,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         torque_multiplier_range = [0.8, 1.2]
         randomize_com = True
         com_range = [-0.15, 0.15]
-        observation_lag = True
+        observation_lag = False
         observation_lag_range = [0, 10]  # ms
 
     class noise:
