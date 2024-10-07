@@ -192,9 +192,9 @@ class BDXAMPCfg(LeggedRobotCfg):
 
     class domain_rand:
         randomize_friction = True
-        friction_range = [0.7, 1.4]
+        friction_range = [0.9, 1.1]
         randomize_base_mass = True
-        added_mass_range = [-0.15, 0.15]
+        added_mass_range = [-0.05, 0.05]
         push_robots = False
         push_interval_s = 4
         max_push_vel_xy = 0.5  # 0.3
@@ -202,9 +202,9 @@ class BDXAMPCfg(LeggedRobotCfg):
         stiffness_multiplier_range = [0.99, 1.01]
         damping_multiplier_range = [0.99, 1.01]
         randomize_torques = True
-        torque_multiplier_range = [0.8, 1.2]
+        torque_multiplier_range = [0.95, 1.05]
         randomize_com = True
-        com_range = [-0.15, 0.15]
+        com_range = [-0.01, 0.01]
         observation_lag = False
         observation_lag_range = [0, 10]  # ms
 
@@ -213,11 +213,11 @@ class BDXAMPCfg(LeggedRobotCfg):
         noise_level = 1.0  # scales other values
 
         class noise_scales:
-            dof_pos = 0.1
-            dof_vel = 0.3  # finish with very large dof_vel ? 1.5
-            lin_vel = 0.1
-            ang_vel = 0.1
-            gravity = 0.1
+            dof_pos = 0.01
+            dof_vel = 0.01  # finish with very large dof_vel ? 1.5
+            lin_vel = 0.01
+            ang_vel = 0.01
+            gravity = 0.01
             height_measurements = 0.1
 
     class rewards(LeggedRobotCfg.rewards):
@@ -254,9 +254,9 @@ class BDXAMPCfg(LeggedRobotCfg):
         heading_command = False  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [0.0, 0.14]  # min max [m/s] # 0.14 ok
-            lin_vel_y = [-0.1, 0.1]  # min max [m/s] # O.1 ok
-            ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s] # 0.3 ok
+            lin_vel_x = [0.14, 0.14]  # min max [m/s] # 0.14 ok
+            lin_vel_y = [0.0, 0.0]  # min max [m/s] # O.1 ok
+            ang_vel_yaw = [0.0, 0.0]  # min max [rad/s] # 0.3 ok
             heading = [0, 0]
 
     class viewer(LeggedRobotCfg.viewer):
