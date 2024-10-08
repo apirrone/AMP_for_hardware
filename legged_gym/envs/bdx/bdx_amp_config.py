@@ -206,7 +206,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         randomize_com = True
         com_range = [-0.01, 0.01]
         observation_lag = True
-        observation_lag_range = [0, 10]  # ms
+        observation_lag_range = [0, 40]  # ms
 
     class noise:
         add_noise = True
