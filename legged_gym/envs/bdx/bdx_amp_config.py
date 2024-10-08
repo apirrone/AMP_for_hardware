@@ -61,7 +61,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         # RMA
         # If num_rma_obs = 0, RMA is not used
         # num_rma_obs = 0
-        num_rma_obs = 20
+        num_rma_obs = 21
 
         include_history_steps = None if num_rma_obs == 0 else 15
 
@@ -140,8 +140,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         # action_scale = 1.0  # 0.25
 
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 2  # 120hz control if dt 240hz, 60hz if dt 120hz
-        # decimation = 4  # 30hz control if dt 120hz, 60hz if dt 240hz
+        # decimation = 2  # 120hz control if dt 240hz, 60hz if dt 120hz
+        decimation = 4  # 30hz control if dt 120hz, 60hz if dt 240hz
 
         action_filter = False
         cutoff_frequency = 10
@@ -186,8 +186,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         thickness = 0.001
 
     class sim(LeggedRobotCfg.sim):
-        # dt = 0.0083333  # 120hz
-        dt = 0.00416665  # 240hz
+        dt = 0.0083333  # 120hz
+        # dt = 0.00416665  # 240hz
         substeps = 1
 
     class domain_rand:
@@ -205,7 +205,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         torque_multiplier_range = [0.95, 1.05]
         randomize_com = True
         com_range = [-0.01, 0.01]
-        observation_lag = False
+        observation_lag = True
         observation_lag_range = [0, 10]  # ms
 
     class noise:
