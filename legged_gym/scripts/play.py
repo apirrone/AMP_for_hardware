@@ -45,7 +45,7 @@ def play(args):
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 50)
 
     env_cfg.env.get_commands_from_joystick = False
-    env_cfg.env.get_commands_from_keyboard = True
+    env_cfg.env.get_commands_from_keyboard = False
 
     env_cfg.terrain.num_rows = 5
     env_cfg.terrain.num_cols = 5
@@ -57,7 +57,7 @@ def play(args):
     env_cfg.domain_rand.randomize_base_mass = False  # TODO
     env_cfg.domain_rand.randomize_torques = False  # TODO
     env_cfg.domain_rand.randomize_com = False  # TODO
-    env_cfg.domain_rand.observation_lag = True  # TODO
+    env_cfg.domain_rand.observation_lag = False  # TODO
     # env_cfg.domain_rand.observation_lag_range = [0, 2]  # ms
     # env_cfg.commands.ranges.lin_vel_x = [0.0, 0.2]
     # env_cfg.commands.ranges.ang_vel_yaw = [-0.4, 0.4]
