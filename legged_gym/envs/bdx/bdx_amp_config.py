@@ -44,8 +44,10 @@ NO_FEET = False  # Do not use feet in the amp observations and data
 class BDXAMPCfg(LeggedRobotCfg):
     class env(LeggedRobotCfg.env):
         num_envs = 8
-        num_observations = 51  # TODO what ?
-        num_privileged_obs = 57
+        # num_observations = 51
+        # num_privileged_obs = 57
+        num_observations = 66
+        num_privileged_obs = 72
         num_actions = 15
         env_spacing = 1.0
         reference_state_initialization = False
@@ -143,8 +145,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         # decimation = 2  # 120hz control if dt 240hz, 60hz if dt 120hz
         decimation = 4  # 30hz control if dt 120hz, 60hz if dt 240hz
 
-        action_filter = False
-        cutoff_frequency = 10
+        action_filter = True
+        cutoff_frequency = 30
 
     class terrain(LeggedRobotCfg.terrain):
         mesh_type = "plane"  # "heightfield" # none, plane, heightfield or trimesh

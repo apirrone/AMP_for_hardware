@@ -520,6 +520,7 @@ class LeggedRobot(BaseTask):
                 (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
                 self.dof_vel * self.obs_scales.dof_vel,
                 self.actions,
+                self.last_actions,
             ),
             dim=-1,
         )
