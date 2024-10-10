@@ -145,7 +145,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         # decimation = 2  # 120hz control if dt 240hz, 60hz if dt 120hz
         decimation = 4  # 30hz control if dt 120hz, 60hz if dt 240hz
 
-        action_filter = True
+        action_filter = False
         cutoff_frequency = 30
 
     class terrain(LeggedRobotCfg.terrain):
@@ -239,8 +239,8 @@ class BDXAMPCfg(LeggedRobotCfg):
             torques = -0.000025  # -0.000025
             dof_vel = 0.0
             dof_acc = 0.0
-            base_height = -1.0
-            feet_air_time = 1.0
+            base_height = 0.0
+            feet_air_time = 0.0
             collision = 0.0
             feet_stumble = 0.0
             action_rate = -1.2
