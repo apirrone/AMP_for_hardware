@@ -240,7 +240,7 @@ class BDXAMPCfg(LeggedRobotCfg):
             dof_vel = 0.0
             dof_acc = 0.0
             base_height = -1.0
-            feet_air_time = 0.0
+            feet_air_time = 1.0
             collision = 0.0
             feet_stumble = 0.0
             action_rate = -1.2

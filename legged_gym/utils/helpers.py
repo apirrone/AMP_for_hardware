@@ -254,7 +254,8 @@ def export_policy_as_jit(actor_critic, path, rma=False):
             adaptation_module = copy.deepcopy(actor_critic.adaptation_module).to("cpu")
             traced_script_module_adaptation = torch.jit.script(adaptation_module)
 
-        nb_obs = 51
+        # nb_obs = 51
+        nb_obs = 66
         nb_history_steps = 15
         nb_latent = 18
 
