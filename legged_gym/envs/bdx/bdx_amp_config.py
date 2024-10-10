@@ -96,7 +96,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         # effort = 0.52  # Nm
 
         stiffness_all = 2.54  # 3 [N*m/rad]
-        # stiffness_all = 4  # 3 [N*m/rad]
+        # stiffness_all = 10  # 3 [N*m/rad]
         # damping_all = 0.095  # 0.1
         damping_all = 0  # 0.1
         stiffness = {
@@ -136,8 +136,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         }
 
         # action scale: target angle = actionScale * action + defaultAngle
-        action_scale = 0.25  # 0.25
-        # action_scale = 1.0  # 0.25
+        # action_scale = 0.25  # 0.25
+        action_scale = 1.0  # 0.25
 
         # decimation: Number of control action updates @ sim DT per policy DT
         # decimation = 2  # 120hz control if dt 240hz, 60hz if dt 120hz
@@ -186,8 +186,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         thickness = 0.001
 
     class sim(LeggedRobotCfg.sim):
-        dt = 0.0083333  # 120hz
-        # dt = 0.00416665  # 240hz
+        # dt = 0.0083333  # 120hz
+        dt = 0.00416665  # 240hz
         substeps = 1
 
     class domain_rand:
