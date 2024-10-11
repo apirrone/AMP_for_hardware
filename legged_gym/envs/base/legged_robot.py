@@ -145,6 +145,19 @@ class LeggedRobot(BaseTask):
                 self.num_envs, self.num_obs, max_num_history, self.device
             )
 
+        if self.cfg.env.placo_imitation:
+            from legged_gym.utilities.placo_walk_engine import PlacoWalkEngine
+
+            self.placo_walk_engines = []
+            for i in range(self.cfg.env.num_envs):
+                self.placo_walk_engines.append(
+                    PlacoWalkEngine(
+                        model_filename=self.cfg.asset.file.format(
+                            LEGGED_GYM_ROOT_DIR=LEGGED_GYM_ROOT_DIR
+                        )
+                    )
+                )
+
     def reset(self):
         """Reset all robots"""
         self.reset_idx(torch.arange(self.num_envs, device=self.device))
