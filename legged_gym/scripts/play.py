@@ -53,6 +53,8 @@ def play(args):
     env_cfg.noise.add_noise = True
     env_cfg.domain_rand.randomize_friction = True
     env_cfg.domain_rand.push_robots = False
+    env_cfg.domain_rand.push_interval_s = 1.5
+    env_cfg.domain_rand.max_push_vel_xy = 0.5  # 0.3
     env_cfg.domain_rand.randomize_gains = False
     env_cfg.domain_rand.randomize_base_mass = True
     env_cfg.domain_rand.randomize_torques = True
