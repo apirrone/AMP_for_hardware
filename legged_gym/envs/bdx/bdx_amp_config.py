@@ -293,4 +293,6 @@ class BDXAMPCfgPPO(LeggedRobotCfgPPO):
 
         disc_grad_penalty = 5  # original 10
 
-        min_normalized_std = [0.02] * 15
+        # Large incentivizes exploration
+        min_normalized_std = [0.1] * 15  # 0.02
+        # min_normalized_std = None
