@@ -227,8 +227,8 @@ class BDXAMPCfg(LeggedRobotCfg):
 
         class scales(LeggedRobotCfg.rewards.scales):
             termination = 0.0
-            tracking_lin_vel = 1.5 * 1.0 / (0.004 * 4)
-            tracking_ang_vel = 0.5 * 1.0 / (0.004 * 4)
+            tracking_lin_vel = 1.5 * 1.0 / (0.0083333 * 4)
+            tracking_ang_vel = 0.5 * 1.0 / (0.0083333 * 4)
             # tracking_lin_vel = 1.0
             # tracking_ang_vel = 0.5
             lin_vel_z = 0.0
@@ -274,7 +274,7 @@ class BDXAMPCfgPPO(LeggedRobotCfgPPO):
         num_learning_epochs = 5
         num_mini_batches = 4
         disc_coef = 1  # 5
-        bounds_loss_coef = 10  # commented
+        # bounds_loss_coef = 10  # commented
 
     class runner(LeggedRobotCfgPPO.runner):
         run_name = ""
