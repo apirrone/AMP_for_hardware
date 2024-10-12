@@ -35,8 +35,8 @@ from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobot
 # MOTION_FILES = glob.glob("datasets/bdx/new_placo_moves/*")
 MOTION_FILES = [
     # "datasets/bdx/placo_moves/bdx_walk_forward.txt", # OK
-    # "datasets/bdx/placo_moves_trunk_pitch/bdx_walk_forward.txt",
-    "datasets/bdx/placo_moves_higher/bdx_walk_forward.txt",
+    "datasets/bdx/placo_moves_trunk_pitch/bdx_walk_forward.txt",
+    # "datasets/bdx/placo_moves_higher/bdx_walk_forward.txt",
 ]
 
 NO_FEET = False  # Do not use feet in the amp observations and data
@@ -96,8 +96,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         effort = 0.93  # Nm
         # effort = 0.52  # Nm
 
-        stiffness_all = 2.54  # 3 [N*m/rad]
-        # stiffness_all = 1.25  # 3 [N*m/rad]
+        # stiffness_all = 2.54  # 3 [N*m/rad]
+        stiffness_all = 2.54 * (2500 / 1100)
         # damping_all = 0.095  # 0.1
         damping_all = 0  # 0.1
         stiffness = {
@@ -255,9 +255,9 @@ class BDXAMPCfg(LeggedRobotCfg):
         heading_command = False  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [0.0, 0.14]  # min max [m/s] # 0.14 ok
-            lin_vel_y = [-0.1, 0.1]  # min max [m/s] # O.1 ok
-            ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s] # 0.3 ok
+            lin_vel_x = [0.14, 0.14]  # min max [m/s] # 0.14 ok
+            lin_vel_y = [0.0, 0.0]  # min max [m/s] # O.1 ok
+            ang_vel_yaw = [0.0, 0.0]  # min max [rad/s] # 0.3 ok
             heading = [0, 0]
 
     class viewer(LeggedRobotCfg.viewer):
