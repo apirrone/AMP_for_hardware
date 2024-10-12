@@ -64,6 +64,8 @@ def play(args):
     # env_cfg.commands.ranges.lin_vel_x = [0.0, 0.2]
     # env_cfg.commands.ranges.ang_vel_yaw = [-0.4, 0.4]
 
+    # env_cfg.noise.noise_scales.dof_vel = 1.5
+
     uses_rma = env_cfg.env.num_rma_obs != 0
 
     env_cfg.env.debug_save_obs = True
