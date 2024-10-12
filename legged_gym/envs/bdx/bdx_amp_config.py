@@ -215,7 +215,7 @@ class BDXAMPCfg(LeggedRobotCfg):
 
         class noise_scales:
             dof_pos = 0.03
-            dof_vel = 0.2  # finish with very large dof_vel ? 1.5
+            dof_vel = 0.5  # finish with very large dof_vel ? 1.5
             lin_vel = 0.05
             ang_vel = 0.05
             gravity = 0.05
