@@ -32,7 +32,7 @@ import glob
 
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
-# MOTION_FILES = glob.glob("datasets/bdx/new_placo_moves/*")
+# MOTION_FILES = glob.glob("datasets/bdx/many_placo_examples/*")
 MOTION_FILES = [
     # "datasets/bdx/placo_moves/bdx_walk_forward.txt", # OK
     "datasets/bdx/placo_moves_trunk_pitch/bdx_walk_forward.txt",
@@ -67,7 +67,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         include_history_steps = None if num_rma_obs == 0 else 15
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 0.18]  # x,y,z [m]
+        pos = [0.0, 0.0, 0.16]  # x,y,z [m]
         # pos = [0.0, 0.0, 0.3]  # x,y,z [m]
         rot = [0, -0.08, 0, 1]
 
@@ -96,8 +96,8 @@ class BDXAMPCfg(LeggedRobotCfg):
         effort = 0.93  # Nm
         # effort = 0.52  # Nm
 
-        # stiffness_all = 2.54  # 3 [N*m/rad]
-        stiffness_all = 2.54 * (2500 / 1100)
+        stiffness_all = 2.54  # 3 [N*m/rad]
+        # stiffness_all = 2.54 * (2500 / 1100)
         # damping_all = 0.095  # 0.1
         damping_all = 0  # 0.1
         stiffness = {
@@ -193,9 +193,9 @@ class BDXAMPCfg(LeggedRobotCfg):
 
     class domain_rand:
         randomize_friction = True
-        friction_range = [0.92, 1.08]
+        friction_range = [0.95, 1.05]
         randomize_base_mass = True
-        added_mass_range = [-0.03, 0.03]
+        added_mass_range = [-0.01, 0.01]
         push_robots = False
         push_interval_s = 3
         max_push_vel_xy = 0.5  # 0.3
@@ -203,9 +203,9 @@ class BDXAMPCfg(LeggedRobotCfg):
         stiffness_multiplier_range = [0.99, 1.01]
         damping_multiplier_range = [0.99, 1.01]
         randomize_torques = True
-        torque_multiplier_range = [0.92, 1.08]
+        torque_multiplier_range = [0.95, 1.05]
         randomize_com = True
-        com_range = [-0.03, 0.03]
+        com_range = [-0.01, 0.01]
         observation_lag = True
         observation_lag_range = [0, 1]  # ms
 
@@ -214,11 +214,11 @@ class BDXAMPCfg(LeggedRobotCfg):
         noise_level = 1.0  # scales other values
 
         class noise_scales:
-            dof_pos = 0.03
-            dof_vel = 1.0  # finish with very large dof_vel ? 1.5
-            lin_vel = 0.05
-            ang_vel = 0.05
-            gravity = 0.05
+            dof_pos = 0.01
+            dof_vel = 0.01  # finish with very large dof_vel ? 1.5
+            lin_vel = 0.01
+            ang_vel = 0.01
+            gravity = 0.01
             height_measurements = 0.1
 
     class rewards(LeggedRobotCfg.rewards):
@@ -255,7 +255,7 @@ class BDXAMPCfg(LeggedRobotCfg):
         heading_command = False  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [0.0, 0.14]  # min max [m/s] # 0.14 ok
+            lin_vel_x = [0.14, 0.14]  # min max [m/s] # 0.14 ok
             lin_vel_y = [0.0, 0.0]  # min max [m/s] # O.1 ok
             ang_vel_yaw = [0.0, 0.0]  # min max [rad/s] # 0.3 ok
             heading = [0, 0]
@@ -289,10 +289,10 @@ class BDXAMPCfgPPO(LeggedRobotCfgPPO):
         amp_reward_coef = 2.0  # 2.0
         amp_motion_files = MOTION_FILES
         amp_num_preload_transitions = 2000000
-        amp_task_reward_lerp = 0.2  # 0.3
+        amp_task_reward_lerp = 0.3  # 0.3
         amp_discr_hidden_dims = [1024, 512]
 
-        disc_grad_penalty = 0.01  # original 10
+        disc_grad_penalty = 5  # original 10
 
         # Large incentivizes exploration
         min_normalized_std = [0.02] * 15  # 0.02
